@@ -62,7 +62,7 @@ namespace GameSystemEnum
     {
         public AttackResultType Type;
         public int RawRoll; // 原始投掷结果
-        public int FinalValue; // 最终结果(原始投掷结果+修正值)
+        public int FinalValue; // 最终结果 (原始投掷结果 + 修正值)
         public bool IsSuccessful; //是否命中
     }
 }

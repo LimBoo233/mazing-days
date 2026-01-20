@@ -29,11 +29,15 @@ namespace Data
 
 		[field: SerializeField] public DamageType DamageType { get; private set; }
 		[field: SerializeField] public DamageType TargetType { get; private set; }
+		
+		[field: SerializeField] public int[] Dice { get; set; }
+
 
 		//技能伤害骰子
 		[field: SerializeField] public Dice ValueDice;
-
-
+		// 技能距离
+		[field: SerializeField] public int Range { get; private set; } = 1;
+		
 		// TODO：技能特效相关
 		[field: Header("技能表现相关")]
 		[field: SerializeField]
