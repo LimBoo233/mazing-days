@@ -1,11 +1,10 @@
 using UnityEngine;
-using GameSystemEnum;
 using Utils;
 
-namespace Data
+namespace Combat.Data
 {
 	[CreateAssetMenu(fileName = "NewSkill", menuName = "MazingDays/Skill Data")]
-	public class SkillData : ScriptableObject
+	public class SkillDataSo : ScriptableObject
 	{
 		[field: Header("基础信息")]
 		[field: SerializeField]
