@@ -3,7 +3,7 @@
 namespace Modules.Combat.Logic
 {
 	/// <summary>
-	/// 上海类型枚举类的扩展方法，提供额外的功能（ex：判断上海是否为物理伤害）
+	/// 伤害类型枚举类的扩展方法，提供额外的功能（ex：判断伤害是否为物理伤害）
 	/// </summary>
 	public static class DamageTypeExtensions
 	{

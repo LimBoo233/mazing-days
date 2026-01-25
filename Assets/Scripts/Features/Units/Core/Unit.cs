@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Combat;
+using Core.Architecture;
+using Core.Event;
 using GameSystemEnum;
 using Modules.Combat.Data;
 using UnityEngine;
@@ -92,6 +94,73 @@ namespace Features.Units.Core
 			}
 		}
 		
+		/// <summary>
+		/// 角色受伤逻辑
+		/// </summary>
+		/// <param name="damage">原始伤害</param>
+		/// <param name="type">伤害类型</param>
+		/// <param name="isCritical">是否暴击</param>
+		public virtual void TakeDamage(int damage, DamageType type,bool isCritical = false)
+		{ 
+			if (IsDead) return;
+			float resistance = 0.0f;
+			if (ResistanceDict.ContainsKey(type))
+			{
+				resistance = ResistanceDict[type];
+			}
+			
+			int finalDamage = Mathf.RoundToInt(damage * (1.0f - resistance));
+			if(resistance<1.0f)
+				finalDamage = Mathf.Max(1,finalDamage);
+			
+			CurrentHp -= finalDamage;
+			//发送受伤事件
+			//后续处理受伤音效，角色状态机，屏幕振动等效果
+			EventBus.Publish(new TakeDamageEvent
+			{
+				//这里不传名字
+				//有可能两只怪物的名字相同，一个受伤结果全都播放受伤动画
+				Target = this,
+				Damage = finalDamage,
+				IsCritical =  isCritical
+			});
+			
+			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
+			
+			LogDamageInfo(type, damage, resistance, finalDamage);
+			
+			if(CurrentHp<= 0 )
+				Die();
+			
+		}
+
+		/// <summary>
+		/// 角色死亡逻辑
+		/// 这里根据角色阵营不同，处理的死亡事件也应该不同
+		/// 例如敌人死亡，玩家获取经验等奖励
+		/// </summary>
+		public virtual void Die()
+		{
+			IsDead = true;
+			CurrentHp = 0;
+			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 已阵亡。", 1000));
+			EventBus.Publish(new UnitDiedEvent { DeadUnit = this });
+		}
 		
+		/// <summary>
+		/// Debug 输出伤害信息，只负责输出不负责计算
+		/// </summary>
+		private void LogDamageInfo(DamageType type, int rawDice, float resistance, int finalDice)
+		{
+			string suffix = resistance switch
+			{
+				< 0f => " <color=orange>(弱点!)</color>",
+				>= 1f => " <color=grey>(免疫)</color>",
+				> 0f => " (抵抗)",
+				_ => ""
+			};
+
+			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix}");
+		}
 	}
 }
