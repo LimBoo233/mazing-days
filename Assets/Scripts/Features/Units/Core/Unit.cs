@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.Architecture;
 using Core.Event;
+using Core.Utils;
 using GameSystemEnum;
 using Modules.Combat.Data;
 using Modules.Combat.Data.Enums;
@@ -24,6 +25,9 @@ namespace Features.Units.Core
 
 		// 角色的 AC 值
 		[field: SerializeField] public int Ac { get; protected set; }
+		
+		//角色先攻骰
+		public int Initiative { get; private set; }
 
 		// 角色速度
 		// TODO: 这里应该还有先攻骰，不过暂时先不考虑，简单处理
@@ -63,6 +67,8 @@ namespace Features.Units.Core
 		
 		// [SerializeField] private Sprite _characterIcon;
 		
+		
+		
 	
 		public event System.Action<float> OnHpChanged;
 		
@@ -81,6 +87,17 @@ namespace Features.Units.Core
 			CurrentHp = MaxHp;
 			IsDead = false;
 			OnHpChanged?.Invoke(1.0f);
+		}
+
+		/// <summary>
+		/// 投掷先攻骰的方法
+		/// 这里先简单写速度加成
+		/// </summary>
+		/// <returns></returns>
+		public void RollInitiativeDice()
+		{
+			Initiative = DiceRoller.Roll(1, 20)+Speed/2;
+			
 		}
 		
 		/// <summary>
@@ -124,7 +141,6 @@ namespace Features.Units.Core
 				CurrentHp = 0;
 				Die();
 			}
-			print("角色剩余生命"+CurrentHp);
 			//发送受伤事件
 			OnHpChanged?.Invoke((float)CurrentHp / MaxHp);
 			//后续处理受伤音效，角色状态机，屏幕振动等效果
@@ -171,7 +187,6 @@ namespace Features.Units.Core
 			};
 
 			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix},剩余血量: {CurrentHp}");
-			
 		}
 	}
 }

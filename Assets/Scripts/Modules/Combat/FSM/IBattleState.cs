@@ -2,8 +2,9 @@
 {
 	public interface IBattleState
 	{
+		
 		public void Enter(CombatManager combatManager);
 		public void Update(CombatManager combatManager);
-		public void Exit();
+		public void Exit(CombatManager combatManager);
 	}
 }

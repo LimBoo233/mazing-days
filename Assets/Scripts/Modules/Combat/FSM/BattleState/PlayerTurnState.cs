@@ -1,10 +1,11 @@
-﻿namespace Modules.Combat.FSM
+﻿namespace Modules.Combat.FSM.BattleState
 {
-	public class EnemyTurnState: IBattleState
+	public class PlayerTurnState: IBattleState
 	{
 		public void Enter(CombatManager combatManager)
 		{
-			throw new System.NotImplementedException();
+			combatManager.SelectedSkillId = -1;
+			combatManager.SelectedTarget = default;
 		}
 
 		public void Update(CombatManager combatManager)
@@ -12,9 +13,11 @@
 			throw new System.NotImplementedException();
 		}
 
-		public void Exit()
+		public void Exit(CombatManager manager)
 		{
 			throw new System.NotImplementedException();
 		}
+
+		
 	}
 }
