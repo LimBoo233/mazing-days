@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c90401bd540453bb32c1d5136587c03, type: 3}
+  m_Name: 2_Crusader_Strike
+  m_EditorClassIdentifier: 
+  <SkillID>k__BackingField: 2
+  <SkillName>k__BackingField: "\u5341\u5B57\u519B\u6253\u51FB"
+  <Description>k__BackingField: "\u4F7F\u7528\u4E3B\u624B\u6B66\u5668\u8FDB\u884C\u4E00\u6B21\u653B\u51FB\uFF0C\u5E76\u9644\u5E26\u4E00\u5B9A\u795E\u5723\u4F24\u5BB3\u3002"
+  <SkillIcon>k__BackingField: {fileID: 0}
+  <ApCost>k__BackingField: 1
+  <BpCost>k__BackingField: 1
+  <RpCost>k__BackingField: 1
+  <SkillCategory>k__BackingField: 0
+  <HitType>k__BackingField: 0
+  <HitStatSource>k__BackingField: 0
+  <SaveTargetStat>k__BackingField: 0
+  <DamageList>k__BackingField:
+  - valueSource: 1
+    fixedDice:
+      Count: 0
+      Sides: 0
+    typeSource: 1
+    fixedType: 0
+    scalingStat: 4
+    damageMultiplier: 1
+  - valueSource: 0
+    fixedDice:
+      Count: 2
+      Sides: 8
+    typeSource: 1
+    fixedType: 11
+    scalingStat: 3
+    damageMultiplier: 1
+  <RangeSource>k__BackingField: 1
+  <Range>k__BackingField: 0
+  <HitVfx>k__BackingField: {fileID: 0}
+  <HitSound>k__BackingField: {fileID: 0}
+  <AnimTrigger>k__BackingField: 

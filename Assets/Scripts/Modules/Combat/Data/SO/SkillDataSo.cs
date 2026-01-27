@@ -28,10 +28,26 @@ namespace Modules.Combat.Data.SO
 
 		[field: SerializeField] public int BpCost { get; private set; }
 		[field: SerializeField] public int RpCost { get; private set; }
+		
+		// ================= 命中规则 =================
 
-		[field: Header("技能效果与伤害类型")]
+		[field: Header("技能效果与命中规则")]
 		[field: SerializeField]
 		public SkillCategory SkillCategory { get; private set; }
+		
+		[field: Tooltip("这个技能怎么判定是否生效？")]
+		[field: SerializeField]
+		public SkillHitType HitType { get; private set; }
+
+		[field: Tooltip("如果是攻击检定(AttackRoll)，用什么属性算命中？\n如果是豁免检定(SavingThrow)，用什么属性算 DC？")]
+		[field: SerializeField]
+		public StatAttributeSource HitStatSource { get; private set; }
+
+		[field: Tooltip("仅当 HitType 为 SavingThrow 时生效：敌人用什么属性来抵抗？(例如火球术填 Dex)")]
+		[field: SerializeField]
+		public StatAttribute SaveTargetStat { get; private set; }
+		
+		// ====================================================
 		
 		[field: Header("伤害配置列表")]
 		[field: SerializeField]

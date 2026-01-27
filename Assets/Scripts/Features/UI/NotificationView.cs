@@ -21,9 +21,9 @@ namespace Features.UI
 		public Transform Container => dynamicContainer;
 		public CanvasGroup CanvasGroup => canvasGroup;
 
-		[SerializeField] private CanvasGroup canvasGroup;
-		[SerializeField] private TextMeshProUGUI defaultText;
-		[SerializeField] private Transform dynamicContainer;
+		[AutoBind][SerializeField] private CanvasGroup canvasGroup;
+		[AutoBind] [SerializeField] private TextMeshProUGUI defaultText;
+		[AutoBind] [SerializeField] private Transform dynamicContainer;
 
 		private CancellationTokenSource _cts;
 

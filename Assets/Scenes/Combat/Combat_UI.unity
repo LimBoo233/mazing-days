@@ -250,6 +250,21 @@ PrefabInstance:
       propertyPath: m_enableAutoSizing
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4040770746368170660, guid: aa6fcde4ef3cd6c438f40e652d885281,
+        type: 3}
+      propertyPath: canvasGroup
+      value: 
+      objectReference: {fileID: 818999394}
+    - target: {fileID: 4040770746368170660, guid: aa6fcde4ef3cd6c438f40e652d885281,
+        type: 3}
+      propertyPath: defaultText
+      value: 
+      objectReference: {fileID: 818999393}
+    - target: {fileID: 4040770746368170660, guid: aa6fcde4ef3cd6c438f40e652d885281,
+        type: 3}
+      propertyPath: dynamicContainer
+      value: 
+      objectReference: {fileID: 818999392}
     - target: {fileID: 5485967112883106975, guid: aa6fcde4ef3cd6c438f40e652d885281,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -265,6 +280,30 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa6fcde4ef3cd6c438f40e652d885281, type: 3}
+--- !u!224 &818999392 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5459909225752168570, guid: aa6fcde4ef3cd6c438f40e652d885281,
+    type: 3}
+  m_PrefabInstance: {fileID: 818999391}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &818999393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1789373181528753508, guid: aa6fcde4ef3cd6c438f40e652d885281,
+    type: 3}
+  m_PrefabInstance: {fileID: 818999391}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!225 &818999394 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5325172716879410017, guid: aa6fcde4ef3cd6c438f40e652d885281,
+    type: 3}
+  m_PrefabInstance: {fileID: 818999391}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &843867956
 PrefabInstance:
   m_ObjectHideFlags: 0
