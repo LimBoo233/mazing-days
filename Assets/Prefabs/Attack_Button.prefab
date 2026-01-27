@@ -134,7 +134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9c8cbea7d241eb49aeabb769e83af69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <SkillData>k__BackingField: {fileID: 0}
+  <SkillData>k__BackingField: {fileID: 11400000, guid: f7a0d80e7777ffa41a265fadafaedf0a,
+    type: 2}
   button: {fileID: 8548321827064656531}
 --- !u!1 &8223274237151164451
 GameObject:
