@@ -124,13 +124,14 @@ namespace Features.Units.Core
 				CurrentHp = 0;
 				Die();
 			}
+			
 			print("角色剩余生命"+CurrentHp);
+			
 			//发送受伤事件
 			OnHpChanged?.Invoke((float)CurrentHp / MaxHp);
 			//后续处理受伤音效，角色状态机，屏幕振动等效果
 			EventBus.Publish(new TakeDamageEvent
 			{
-				//这里不传名字
 				//有可能两只怪物的名字相同，一个受伤结果全都播放受伤动画
 				Target = this,
 				TargetName = this.CharacterName,

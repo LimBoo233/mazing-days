@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c90401bd540453bb32c1d5136587c03, type: 3}
+  m_Name: 3_Fireba
+  m_EditorClassIdentifier: 
+  <SkillID>k__BackingField: 3
+  <SkillName>k__BackingField: "\u706B\u7403\u672F"
+  <Description>k__BackingField: "\u51DD\u805A\u706B\u7130\u7684\u529B\u91CF\uFF0C\u5BF9\u8303\u56F4\u5185\u7684\u76EE\u6807\u8FDB\u884C\u4E00\u6B21\u706B\u7130\u653B\u51FB\u3002"
+  <SkillIcon>k__BackingField: {fileID: 0}
+  <ApCost>k__BackingField: 1
+  <BpCost>k__BackingField: 0
+  <RpCost>k__BackingField: 3
+  <SkillCategory>k__BackingField: 0
+  <HitType>k__BackingField: 1
+  <HitStatSource>k__BackingField: 0
+  <SaveTargetStat>k__BackingField: 2
+  <DamageList>k__BackingField:
+  - valueSource: 0
+    fixedDice:
+      Count: 6
+      Sides: 8
+    typeSource: 0
+    fixedType: 6
+    scalingStat: 0
+    damageMultiplier: 0
+  <RangeSource>k__BackingField: 0
+  <Range>k__BackingField: 1
+  <HitVfx>k__BackingField: {fileID: 0}
+  <HitSound>k__BackingField: {fileID: 0}
+  <AnimTrigger>k__BackingField: 

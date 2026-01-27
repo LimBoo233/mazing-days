@@ -1,5 +1,6 @@
 ﻿using Core.Architecture;
 using Core.Event;
+using Core.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ namespace Modules.Combat.UI
 
 		private void OnEnable()
 		{
-			endTurnButton.onClick.AddListener(EndTurnButtonClicked);
+			endTurnButton.AddDebouncedClickListener(EndTurnButtonClicked);
 		}
 		
 		private void OnDisable()
