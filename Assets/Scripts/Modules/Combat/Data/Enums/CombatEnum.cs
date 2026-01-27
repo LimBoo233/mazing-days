@@ -9,7 +9,7 @@
 		PlayerTurn,
 		EnemyTurn,
 		Busy, //忙碌状态 （技能效果中，动画播放中）
-		Won, //战斗胜利
+		Victory, //战斗胜利
 		Defeat //战斗失败
 	}
 	

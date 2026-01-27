@@ -38,5 +38,19 @@ namespace Features.Units.Player
 			return true;
 		}
 		
+		void Update()
+		{
+			// 按下空格键测试
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				// 测试扣 5 点火焰伤害
+				TakeDamage(5, DamageType.Fire);
+        
+		
+        
+				Debug.Log("【测试】按下了空格键，尝试扣血");
+			}
+		}
+		
 	}
 }

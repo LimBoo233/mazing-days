@@ -63,6 +63,9 @@ namespace Features.Units.Core
 		
 		// [SerializeField] private Sprite _characterIcon;
 		
+	
+		public event System.Action<float> OnHpChanged;
+		
 		protected virtual void Awake()
 		{
 			InitializeStats();
@@ -77,6 +80,7 @@ namespace Features.Units.Core
 			// TODO： 读取数据
 			CurrentHp = MaxHp;
 			IsDead = false;
+			OnHpChanged?.Invoke(1.0f);
 		}
 		
 		/// <summary>
@@ -102,6 +106,7 @@ namespace Features.Units.Core
 		/// <param name="isCritical">是否暴击</param>
 		public virtual void TakeDamage(int damage, DamageType type,bool isCritical = false)
 		{ 
+			
 			if (IsDead) return;
 			float resistance = 0.0f;
 			if (ResistanceDict.ContainsKey(type))
@@ -113,14 +118,22 @@ namespace Features.Units.Core
 			if(resistance<1.0f)
 				finalDamage = Mathf.Max(1,finalDamage);
 			
-			CurrentHp -= finalDamage;
+			CurrentHp -= finalDamage; 
+			if (CurrentHp <= 0)
+			{
+				CurrentHp = 0;
+				Die();
+			}
+			print("角色剩余生命"+CurrentHp);
 			//发送受伤事件
+			OnHpChanged?.Invoke((float)CurrentHp / MaxHp);
 			//后续处理受伤音效，角色状态机，屏幕振动等效果
 			EventBus.Publish(new TakeDamageEvent
 			{
 				//这里不传名字
 				//有可能两只怪物的名字相同，一个受伤结果全都播放受伤动画
 				Target = this,
+				TargetName = this.CharacterName,
 				Damage = finalDamage,
 				IsCritical =  isCritical
 			});
@@ -128,9 +141,9 @@ namespace Features.Units.Core
 			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
 			
 			LogDamageInfo(type, damage, resistance, finalDamage);
+
+		
 			
-			if(CurrentHp<= 0 )
-				Die();
 			
 		}
 
@@ -160,7 +173,8 @@ namespace Features.Units.Core
 				_ => ""
 			};
 
-			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix}");
+			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix},剩余血量: {CurrentHp}");
+			
 		}
 	}
 }
