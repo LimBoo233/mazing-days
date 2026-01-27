@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using Combat;
 using Core.Architecture;
 using Core.Event;
 using GameSystemEnum;
 using Modules.Combat.Data;
-using Modules.Combat.Data.Enums;
 using UnityEngine;
 
 namespace Features.Units.Core
@@ -19,7 +19,7 @@ namespace Features.Units.Core
 
 		// 角色阵营
 		[field: SerializeField] public FactionType Faction { get; protected set; }
-
+		
 		[field: SerializeField] public int MaxHp { get; protected set; }
 
 		// 角色的 AC 值
@@ -41,9 +41,9 @@ namespace Features.Units.Core
 		[field: SerializeField] public int CriticalNeed { get; protected set; } = 20;
 
 		#endregion
-
+		
 		#region 2. Resistances 抗性配置
-
+		
 		[Header("Resistances")]
 		[SerializeField]
 		protected List<ResistanceConfig> resistanceSettings = new();
@@ -52,7 +52,7 @@ namespace Features.Units.Core
 		protected readonly Dictionary<DamageType, float> ResistanceDict = new();
 
 		#endregion
-
+		
 		#region 3. Runtime State 状态管理
 
 		public int CurrentHp { get; protected set; }
@@ -60,9 +60,12 @@ namespace Features.Units.Core
 		public bool IsDead { get; protected set; }
 
 		#endregion
-
+		
 		// [SerializeField] private Sprite _characterIcon;
-
+		
+	
+		public event System.Action<float> OnHpChanged;
+		
 		protected virtual void Awake()
 		{
 			InitializeStats();
@@ -77,8 +80,9 @@ namespace Features.Units.Core
 			// TODO： 读取数据
 			CurrentHp = MaxHp;
 			IsDead = false;
+			OnHpChanged?.Invoke(1.0f);
 		}
-
+		
 		/// <summary>
 		/// 初始化抗性字典
 		/// </summary>
@@ -93,43 +97,54 @@ namespace Features.Units.Core
 				}
 			}
 		}
-
+		
 		/// <summary>
 		/// 角色受伤逻辑
 		/// </summary>
 		/// <param name="damage">原始伤害</param>
 		/// <param name="type">伤害类型</param>
 		/// <param name="isCritical">是否暴击</param>
-		public virtual void TakeDamage(int damage, DamageType type, bool isCritical = false)
-		{
+		public virtual void TakeDamage(int damage, DamageType type,bool isCritical = false)
+		{ 
+			
 			if (IsDead) return;
 			float resistance = 0.0f;
-			if (ResistanceDict.TryGetValue(type, out var value))
+			if (ResistanceDict.ContainsKey(type))
 			{
-				resistance = value;
+				resistance = ResistanceDict[type];
 			}
-
+			
 			int finalDamage = Mathf.RoundToInt(damage * (1.0f - resistance));
-	
-			CurrentHp -= finalDamage;
-			//发送受伤事件
-			EventBus.Publish(new TakeDamageEvent
-			{
-				// 传入受伤目标引用
-				Target = this,
-				Damage = finalDamage,
-				IsCritical = isCritical
-			});
-
-			EventBus.Publish(new TextNotifiedEvent(CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
-
-			LogDamageInfo(type, damage, resistance, finalDamage);
-
+			if(resistance<1.0f)
+				finalDamage = Mathf.Max(1,finalDamage);
+			
+			CurrentHp -= finalDamage; 
 			if (CurrentHp <= 0)
 			{
+				CurrentHp = 0;
 				Die();
-				
 			}
+			print("角色剩余生命"+CurrentHp);
+			//发送受伤事件
+			OnHpChanged?.Invoke((float)CurrentHp / MaxHp);
+			//后续处理受伤音效，角色状态机，屏幕振动等效果
+			EventBus.Publish(new TakeDamageEvent
+			{
+				//这里不传名字
+				//有可能两只怪物的名字相同，一个受伤结果全都播放受伤动画
+				Target = this,
+				TargetName = this.CharacterName,
+				Damage = finalDamage,
+				IsCritical =  isCritical
+			});
+			
+			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
+			
+			LogDamageInfo(type, damage, resistance, finalDamage);
+
+		
+			
+			
 		}
 
 		/// <summary>
@@ -144,7 +159,7 @@ namespace Features.Units.Core
 			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 已阵亡。", 1000));
 			EventBus.Publish(new UnitDiedEvent { DeadUnit = this });
 		}
-
+		
 		/// <summary>
 		/// Debug 输出伤害信息，只负责输出不负责计算
 		/// </summary>
@@ -158,8 +173,8 @@ namespace Features.Units.Core
 				_ => ""
 			};
 
-			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix}");
+			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix},剩余血量: {CurrentHp}");
+			
 		}
-		
 	}
 }

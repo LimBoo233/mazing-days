@@ -1,34 +1,30 @@
 ﻿using Core.Architecture;
 using Features.Units.Core;
-using Modules.Combat.Data.SO;
+using Newtonsoft.Json;
 
 namespace Core.Event
 {
 	public struct TurnEndedEvent : IGameEvent
 	{
-	}
-
-	public struct SkillSelectedEvent : IGameEvent
-	{
-		public SkillSelectedEvent(SkillDataSo skillData) => SkillData = skillData;
 		
-		public SkillDataSo SkillData;
 	}
 
 	public struct TakeDamageEvent : IGameEvent
 	{
-		public TakeDamageEvent(Unit target, int damage, bool isCritical) =>
-			(Target, Damage, IsCritical) = (target, damage, isCritical);
-		
+		[JsonIgnore]
 		public Unit Target;
+		public string TargetName;
 		public int Damage;
 		public bool IsCritical;
+		
+		public TakeDamageEvent(Unit target, int damage, bool isCritical) => (Target, TargetName, Damage, IsCritical) = (target, target.CharacterName, damage, isCritical);
 	}
-
+	
 	public struct UnitDiedEvent : IGameEvent
 	{
-		public UnitDiedEvent(Unit deadUnit) => DeadUnit = deadUnit; 
+		[JsonIgnore]
+		public Features.Units.Core.Unit DeadUnit;
 		
-		public Unit DeadUnit;
+		public string DeadUnitName;
 	}
 }
