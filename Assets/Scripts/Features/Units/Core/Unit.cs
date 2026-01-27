@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Combat;
 using Core.Architecture;
 using Core.Event;
 using GameSystemEnum;
 using Modules.Combat.Data;
+using Modules.Combat.Data.Enums;
 using UnityEngine;
 
 namespace Features.Units.Core
@@ -141,9 +141,6 @@ namespace Features.Units.Core
 			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
 			
 			LogDamageInfo(type, damage, resistance, finalDamage);
-
-		
-			
 			
 		}
 

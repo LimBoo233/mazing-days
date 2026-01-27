@@ -1,5 +1,6 @@
 ﻿using Core.Architecture;
 using Features.Units.Core;
+using Modules.Combat.Data.SO;
 using Newtonsoft.Json;
 
 namespace Core.Event
@@ -7,6 +8,13 @@ namespace Core.Event
 	public struct TurnEndedEvent : IGameEvent
 	{
 		
+	}
+
+	public struct SkillSelectedEvent : IGameEvent
+	{
+		public SkillDataSo SkillDataSo;
+		
+		public SkillSelectedEvent(SkillDataSo skillDataSo) => SkillDataSo = skillDataSo;
 	}
 
 	public struct TakeDamageEvent : IGameEvent

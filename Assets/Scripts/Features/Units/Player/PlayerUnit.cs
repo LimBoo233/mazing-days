@@ -1,4 +1,5 @@
 ﻿using Features.Units.Core;
+using Modules.Combat.Data.Enums;
 using UnityEngine;
 
 namespace Features.Units.Player
