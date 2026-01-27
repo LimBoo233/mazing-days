@@ -22,6 +22,6 @@ namespace Modules.Combat
 		}
 
 		private void OnTurnEnded(TurnEndedEvent _) =>
-			EventBus.Publish<TextNotifiedEvent>(new TextNotifiedEvent("回合结束！", 1000));
+			EventBus.Publish(new TextNotifiedEvent("回合结束！", 1000));
 	}
 }

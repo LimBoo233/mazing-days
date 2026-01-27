@@ -21,7 +21,7 @@ namespace DevTools
 			var eventLogger = new EventLogger();
 			eventLogger.Enable();
 			// 游戏逻辑
-			var combatManager = new CombatManager();
+			// var combatManager = new CombatManager();
 			UnityEngine.Debug.Log("【开发模式】自动加载 MainManager");
 		}
 		

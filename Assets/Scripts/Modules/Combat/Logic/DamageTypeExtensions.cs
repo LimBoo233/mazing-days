@@ -1,4 +1,4 @@
-﻿using Combat;
+﻿using Modules.Combat.Data.Enums;
 
 namespace Modules.Combat.Logic
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-using Combat;
+using Modules.Combat.Data.Enums;
 using UnityEngine;
 
 namespace Modules.Combat.Data

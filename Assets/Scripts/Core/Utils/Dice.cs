@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Utils
@@ -5,6 +6,7 @@ namespace Utils
 	/// <summary>
 	/// 骰子类（类 BG3）
 	/// </summary>
+	[Serializable]
 	public struct Dice
 	{
 		[Tooltip("投骰子的数量")] public int Count;

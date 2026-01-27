@@ -1,8 +1,7 @@
-using Combat;
-using GameSystemEnum;
 using UnityEngine;
+using Utils;
 
-namespace Utils
+namespace Core.Utils
 {
 	public static class DiceRoller
 	{

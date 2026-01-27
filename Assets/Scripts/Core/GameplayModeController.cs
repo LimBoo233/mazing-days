@@ -1,5 +1,4 @@
-﻿using Combat;
-using Modules.Combat;
+﻿using Modules.Combat;
 using Modules.Exploration;
 
 namespace Core

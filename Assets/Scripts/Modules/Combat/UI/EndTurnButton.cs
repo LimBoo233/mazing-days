@@ -1,11 +1,9 @@
-﻿using System;
-using Core;
-using Core.Architecture;
+﻿using Core.Architecture;
 using Core.Event;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Combat.UI
+namespace Modules.Combat.UI
 {
 	public class EndTurnButton : MonoBehaviour
 	{

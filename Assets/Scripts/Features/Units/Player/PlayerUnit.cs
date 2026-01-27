@@ -1,12 +1,11 @@
-﻿using Combat;
-using Features.Units.Core;
+﻿using Features.Units.Core;
 using UnityEngine;
 
 namespace Features.Units.Player
 {
 	public class PlayerUnit : Unit
 	{
-		// 压力上限,这个暂时不确定，后面可能还需要更改是否需要压力值
+		// 压力上限，这个暂时不确定，后面可能还需要更改是否需要压力值
 		[field: Header("Resources (BG3)")]
 		[field: SerializeField]
 		public int MaxSanity { get; protected set; } = 100;

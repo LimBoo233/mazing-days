@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Architecture;
+﻿using Core.Architecture;
 using UnityEngine;
 
 namespace DevTools
@@ -39,9 +38,7 @@ namespace DevTools
 			// 简单的过滤器功能
 			// if (!string.IsNullOrEmpty(FilterKeyword) && !eventName.Contains(FilterKeyword)) return;
 			
-			// 技巧：利用 JsonUtility 把类里面的字段打印出来，方便看数值
-			string json = Newtonsoft.Json.JsonConvert.SerializeObject(e);
-			Debug.Log($"<color=#00FF00>[EventBus]</color> <color=#00FFFF>{eventName}</color>: {json}");
+			Debug.Log($"<color=#00FF00>[EventBus]</color> <color=#00FFFF>{eventName}</color>: {e}");
 		}
 
 
