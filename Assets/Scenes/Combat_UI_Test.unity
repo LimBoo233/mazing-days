@@ -765,11 +765,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3590110f58548d982b093ca346885b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CharacterName>k__BackingField: Player_Test
+  <CharacterName>k__BackingField: 
   <Faction>k__BackingField: 0
-  <MaxHp>k__BackingField: 32
-  <Ac>k__BackingField: 18
-  <Speed>k__BackingField: 5
+  <MaxHp>k__BackingField: 0
+  <Ac>k__BackingField: 0
+  <Speed>k__BackingField: 0
   <BaseAttackModifier>k__BackingField: 0
   <BaseAccuracyBonus>k__BackingField: 0
   <CriticalNeed>k__BackingField: 20

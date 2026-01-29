@@ -1,5 +1,4 @@
-﻿using System;
-using Modules.Combat.Data.Enums;
+﻿using Modules.Combat.Data.Enums;
 using UnityEngine;
 
 namespace Modules.Combat.Data
@@ -7,7 +6,7 @@ namespace Modules.Combat.Data
 	/// <summary>
 	/// 抗性配置结构体
 	/// </summary>
-	[Serializable]
+	[System.Serializable]
 	public struct ResistanceConfig
 	{
 		public DamageType type;

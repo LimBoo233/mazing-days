@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Features.Units.Core;
+using Features.Units.View;
 
 namespace Features.UI
 {
@@ -19,15 +20,15 @@ namespace Features.UI
         
         [SerializeField] private Color _hpLowColor = Color.red;
         
-        private Unit _targetUnit;
+        private UnitView _targetUnitView;
 
        
 
-        public void Initialize(Unit unit)
+        public void Initialize(UnitView unitView)
         {
-            _targetUnit = unit;
-            _targetUnit.OnHpChanged += UpdateHealthBar;
-            UpdateHealthBar((float)unit.CurrentHp / unit.MaxHp);
+            _targetUnitView = unitView;
+            _targetUnitView.OnHpChanged += UpdateHealthBar;
+            UpdateHealthBar((float)unitView.CurrentHp / unitView.MaxHp);
         }
 
         /// <summary>
@@ -49,9 +50,9 @@ namespace Features.UI
         
         private void Start()
         {
-            if (_targetUnit == null)
+            if (_targetUnitView == null)
             {
-                var unit = GetComponentInParent<Unit>();
+                var unit = GetComponentInParent<UnitView>();
                 if (unit != null)
                 {
                     Initialize(unit);
@@ -66,9 +67,9 @@ namespace Features.UI
         private void OnDestroy()
         {
             // 取消订阅，防止报错
-            if (_targetUnit != null)
+            if (_targetUnitView != null)
             {
-                _targetUnit.OnHpChanged -= UpdateHealthBar;
+                _targetUnitView.OnHpChanged -= UpdateHealthBar;
             }
         }
     }

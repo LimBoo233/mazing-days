@@ -1,5 +1,6 @@
 ﻿using Core.Architecture;
 using Features.Units.Core;
+using Features.Units.View;
 using Modules.Combat.Data.SO;
 using Newtonsoft.Json;
 
@@ -31,8 +32,6 @@ namespace Core.Event
 	public struct UnitDiedEvent : IGameEvent
 	{
 		[JsonIgnore]
-		public Features.Units.Core.Unit DeadUnit;
-		
-		public string DeadUnitName;
+		public Unit DeadUnit;
 	}
 }

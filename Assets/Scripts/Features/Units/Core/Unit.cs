@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core.Architecture;
 using Core.Event;
 using Core.Utils;
@@ -9,95 +10,104 @@ using UnityEngine;
 
 namespace Features.Units.Core
 {
-	// TODO: 先暂时跳过UI设计相关内容
-	public class Unit : MonoBehaviour
+	[Serializable]
+	public class Unit
 	{
-		#region 1. BaseStats 基础属性
-
 		[field: Header("基础属性")]
-		[field: SerializeField]
-		public string CharacterName { get; protected set; }
+		[field: SerializeField] public string CharacterName { get; set; }
 
-		// 角色阵营
-		[field: SerializeField] public FactionType Faction { get; protected set; }
-		
-		[field: SerializeField] public int MaxHp { get; protected set; }
+		[field: SerializeField] public int MaxHp { get; set; }
+		[field: SerializeField] public int CriticalNeed { get; set; } = 20;
 
-		// 角色的 AC 值
-		[field: SerializeField] public int Ac { get; protected set; }
-		
-		//角色先攻骰
-		public int Initiative { get; private set; }
+		[field: Header("四位属性：力量，速度，智力，精神")]
+		[field: SerializeField] public int Strength { get; set; }
 
-		// 角色速度
-		// TODO: 这里应该还有先攻骰，不过暂时先不考虑，简单处理
-		[field: SerializeField] public int Speed { get; protected set; }
+		[field: SerializeField] public int Speed { get; set; }
+		[field: SerializeField] public int Intelligence { get; set; }
+		[field: SerializeField] public int Spirit { get; set; }
 
-		[field: Tooltip("基础攻击修正值 (相当于 D&D 的力量/智力调整值)\n投伤害骰子时会加上这个值")]
-		[field: SerializeField]
-		public int BaseAttackModifier { get; protected set; }
+		[Header("抗性")]
+		[SerializeField] protected List<ResistanceConfig> resistanceSettings = new();
 
-		[field: Tooltip("基础命中加成 (投 d20 时加上这个值)")]
-		[field: SerializeField]
-		public int BaseAccuracyBonus { get; protected set; }
 
-		// 暴击需求值，方便后续改变
-		[field: SerializeField] public int CriticalNeed { get; protected set; } = 20;
+		// 调整值
+		public int DexModifier => (Speed - 10) / 2;
+		public int StrModifier => (Strength - 10) / 2;
+		public int IntModifier => (Intelligence - 10) / 2;
+		public int SpiModifier => (Spirit - 10) / 2;
 
-		#endregion
-		
-		#region 2. Resistances 抗性配置
-		
-		[Header("Resistances")]
-		[SerializeField]
-		protected List<ResistanceConfig> resistanceSettings = new();
-
-		// 运行时字典，用于快速查找抗性
-		protected readonly Dictionary<DamageType, float> ResistanceDict = new();
-
-		#endregion
-		
-		#region 3. Runtime State 状态管理
-
+		// 运行时属性
 		public int CurrentHp { get; protected set; }
-
 		public bool IsDead { get; protected set; }
 
-		#endregion
-		
-		// [SerializeField] private Sprite _characterIcon;
-		
-		
-		
-	
-		public event System.Action<float> OnHpChanged;
-		
-		protected virtual void Awake()
-		{
-			InitializeStats();
-			InitializeResistances();
-		}
+		// 先攻骰
+		// TODO：修改成一个更易懂的名字，比如 InitiativeRoll
+		public int Initiative { get; set; }
+
+		// 攻击掷骰加值
+		// TODO：伤害掷骰加值因取决于武器类型等因素，次数先简单处理
+		public int BaseAccuracyBonus { get; set; }
+		public int BaseAttackModifier { get; set; }
+
+		public FactionType FactionType { get; protected set; }
+
+		// 事件
+		public event Action<Unit, int> HpChanged;
+		public event Action<Unit> Died;
+
+		// 运行时字典，用于快速查找抗性
+		protected Dictionary<DamageType, float> ResistanceDict = new();
+
 
 		/// <summary>
-		/// 初始化角色状态
+		/// 用于每个 Unit 的初始化，只应该在创建时调用一次
 		/// </summary>
-		protected virtual void InitializeStats()
+		public virtual void InitializeStats()
 		{
-			// TODO： 读取数据
 			CurrentHp = MaxHp;
 			IsDead = false;
-			OnHpChanged?.Invoke(1.0f);
+			ResistanceDict.Clear();
+			foreach (var resistanceConfig in resistanceSettings)
+			{
+				ResistanceDict[resistanceConfig.type] = resistanceConfig.value;
+			}
 		}
 
+
 		/// <summary>
-		/// 投掷先攻骰的方法
-		/// 这里先简单写速度加成
+		/// 投掷先攻骰的方法，先简单写处理：1d4 + 角色速度的一半
 		/// </summary>
-		/// <returns></returns>
-		public void RollInitiativeDice()
+		public void RollInitiativeDice() => Initiative = DiceRoller.Roll(1, 4) + DexModifier;
+
+
+		/// <summary>
+		/// 返回角色对某种伤害类型的抗性值
+		/// </summary>
+		public float GetResistance(DamageType type) => ResistanceDict.GetValueOrDefault(type, 0.0f);
+
+		/// <summary>
+		/// 角色受伤逻辑
+		/// </summary>
+		/// <param name="damage">原始伤害</param>
+		/// <param name="type">伤害类型</param>
+		/// <param name="isCritical">是否暴击</param>
+		public virtual void TakeDamage(int damage, DamageType type, bool isCritical = false)
 		{
-			Initiative = DiceRoller.Roll(1, 20)+Speed/2;
-			
+			if (IsDead) return;
+
+			float resistance = Mathf.Min(GetResistance(type), 1.0f);
+
+			int finalDamage = Mathf.RoundToInt(damage * (1.0f - resistance));
+			if (resistance < 1.0f)
+				finalDamage = Mathf.Max(1, finalDamage);
+
+			CurrentHp = Mathf.Clamp(CurrentHp - finalDamage, 0, MaxHp);
+			if (CurrentHp <= 0)
+			{
+				OnDie();
+			}
+
+			OnHpChanged(finalDamage, isCritical);
 		}
 		
 		/// <summary>
@@ -114,79 +124,26 @@ namespace Features.Units.Core
 				}
 			}
 		}
-		
-		/// <summary>
-		/// 角色受伤逻辑
-		/// </summary>
-		/// <param name="damage">原始伤害</param>
-		/// <param name="type">伤害类型</param>
-		/// <param name="isCritical">是否暴击</param>
-		public virtual void TakeDamage(int damage, DamageType type,bool isCritical = false)
-		{ 
-			
-			if (IsDead) return;
-			float resistance = 0.0f;
-			if (ResistanceDict.ContainsKey(type))
-			{
-				resistance = ResistanceDict[type];
-			}
-			
-			int finalDamage = Mathf.RoundToInt(damage * (1.0f - resistance));
-			if(resistance<1.0f)
-				finalDamage = Mathf.Max(1,finalDamage);
-			
-			CurrentHp -= finalDamage; 
-			if (CurrentHp <= 0)
-			{
-				CurrentHp = 0;
-				Die();
-			}
-			//发送受伤事件
-			OnHpChanged?.Invoke((float)CurrentHp / MaxHp);
-			//后续处理受伤音效，角色状态机，屏幕振动等效果
+
+		protected virtual void OnHpChanged(int finalDamage, bool isCritical)
+		{
+			HpChanged?.Invoke(this, finalDamage);
 			EventBus.Publish(new TakeDamageEvent
 			{
-				//这里不传名字
-				//有可能两只怪物的名字相同，一个受伤结果全都播放受伤动画
 				Target = this,
-				TargetName = this.CharacterName,
+				TargetName = CharacterName,
 				Damage = finalDamage,
-				IsCritical =  isCritical
+				IsCritical = isCritical
 			});
-			
-			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
-			
-			LogDamageInfo(type, damage, resistance, finalDamage);
-			
+
+			EventBus.Publish(new TextNotifiedEvent(CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
 		}
 
-		/// <summary>
-		/// 角色死亡逻辑
-		/// 这里根据角色阵营不同，处理的死亡事件也应该不同
-		/// 例如敌人死亡，玩家获取经验等奖励
-		/// </summary>
-		public virtual void Die()
+		protected virtual void OnDie()
 		{
 			IsDead = true;
-			CurrentHp = 0;
-			EventBus.Publish(new TextNotifiedEvent(this.CharacterName + " 已阵亡。", 1000));
+			Died?.Invoke(this);
 			EventBus.Publish(new UnitDiedEvent { DeadUnit = this });
-		}
-		
-		/// <summary>
-		/// Debug 输出伤害信息，只负责输出不负责计算
-		/// </summary>
-		private void LogDamageInfo(DamageType type, int rawDice, float resistance, int finalDice)
-		{
-			string suffix = resistance switch
-			{
-				< 0f => " <color=orange>(弱点!)</color>",
-				>= 1f => " <color=grey>(免疫)</color>",
-				> 0f => " (抵抗)",
-				_ => ""
-			};
-
-			Debug.Log($"[{CharacterName}] 受到 [{type}] 伤害: 原始{rawDice} -> 最终{finalDice}{suffix},剩余血量: {CurrentHp}");
 		}
 	}
 }
