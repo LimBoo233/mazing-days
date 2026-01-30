@@ -4,6 +4,9 @@ namespace Features.Units.View
 {
 	public class PlayerUnitView : UnitView<PlayerUnit>
 	{
-		
+		protected override void RefreshView()
+		{
+			
+		}
 	}
 }

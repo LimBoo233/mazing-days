@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Features.Units.Core;
+using Features.Units.View;
 using UnityEngine.Serialization;
 
 
@@ -47,10 +48,10 @@ namespace Features.UI
 		{
 			if (_targetUnit != null) return;
 
-			var unit = GetComponentInParent<Unit>();
+			var unit = GetComponentInParent<UnitView<Unit>>();
 			if (unit != null)
 			{
-				Initialize(unit);
+				//Initialize(unit);
 			}
 			else
 			{

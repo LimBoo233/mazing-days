@@ -13,32 +13,54 @@ namespace Features.Units.View
 		// [SerializeField] private Sprite _characterIcon;
 
 		[SerializeField] protected TUnit unit;
-		
-		
-		protected virtual void OnEnable()
-		{
-			if (unit != null)
-			{
-				unit.HpChanged += UnitOnHpChanged;
-				unit.Died += UnitOnDied;
-			}
-		}
+		public TUnit Model => unit;
 
-		protected virtual void OnDisable()
+		public virtual void Bind(TUnit unitModel)
+		{
+			this.unit = unitModel;
+			SubscribeEvents();
+			RefreshView();
+		}
+		
+		public void SubscribeEvents()
 		{
 			if (unit != null)
 			{
 				unit.HpChanged -= UnitOnHpChanged;
 				unit.Died -= UnitOnDied;
-			} 
+				
+				unit.HpChanged += UnitOnHpChanged;
+				unit.Died += UnitOnDied;
+			}
 		}
-
-		protected virtual void UnitOnHpChanged(Unit arg1, int arg2)
+		
+		private void UnsubscribeEvents()
 		{
+			if (unit != null)
+			{
+				unit.HpChanged -= UnitOnHpChanged;
+				unit.Died -= UnitOnDied;
+			}
+		}
+		
+		protected virtual void OnEnable()
+		{
+				SubscribeEvents();
 		}
 
+		protected virtual void OnDisable()
+		{
+			UnsubscribeEvents();
+		}
 
-		protected virtual void UnitOnDied(Unit obj)
+		//子类必须实现这个方法，用来初始化显示
+		protected abstract void RefreshView();
+
+		protected virtual void UnitOnHpChanged(Unit source, int damage)
+		{ }
+
+
+		protected virtual void UnitOnDied(Unit source)
 		{
 		}
 	}

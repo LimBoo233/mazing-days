@@ -4,5 +4,9 @@ namespace Features.Units.View
 {
 	public class EnemyUnitView: UnitView<EnemyUnit>
 	{
+		protected override void RefreshView()
+		{
+			
+		}
 	}
 }
