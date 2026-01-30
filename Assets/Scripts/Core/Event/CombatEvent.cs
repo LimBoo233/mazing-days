@@ -1,6 +1,5 @@
 ﻿using Core.Architecture;
 using Features.Units.Core;
-using Features.Units.View;
 using Modules.Combat.Data.SO;
 using Newtonsoft.Json;
 

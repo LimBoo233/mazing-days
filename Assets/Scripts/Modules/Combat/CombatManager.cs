@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Features.Units.Core;
-using Features.Units.Enemy;
-using Features.Units.Player;
 using Modules.Combat.FSM;
 using Modules.Combat.FSM.BattleState;
 using UnityEngine;
@@ -87,7 +85,7 @@ namespace Modules.Combat
 			string log = "📋 [最终行动顺序]: ";
 			foreach (var u in TurnOrder)
 			{
-				string color = u is Features.Units.Player.PlayerUnit ? "green" : "red";
+				string color = u is PlayerUnit ? "green" : "red";
 				log += $"<color={color}>{u.CharacterName}({u.Initiative})</color> > ";
 			}
 

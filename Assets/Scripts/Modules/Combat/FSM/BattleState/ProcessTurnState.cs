@@ -1,5 +1,4 @@
-using Features.Units.Enemy;
-using Features.Units.Player;
+using Features.Units.Core;
 using UnityEngine;
 
 namespace Modules.Combat.FSM.BattleState
@@ -41,7 +40,8 @@ namespace Modules.Combat.FSM.BattleState
 
         public void Exit(CombatManager manager)
         {
-            throw new System.NotImplementedException();
+           
         }
+        
     }
 }
