@@ -82,7 +82,7 @@ namespace Modules.Combat
 			_currentTurnIndex = 0;
 
 			// 打印日志验证顺序(暂时测试 之后直接删掉)
-			string log = "📋 [最终行动顺序]: ";
+			string log = "[最终行动顺序]: ";
 			foreach (var u in TurnOrder)
 			{
 				string color = u is PlayerUnit ? "green" : "red";

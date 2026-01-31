@@ -1,4 +1,5 @@
-﻿using Features.Units.Core;
+﻿using Features.UI;
+using Features.Units.Core;
 using UnityEngine;
 
 namespace Features.Units.View
@@ -13,16 +14,23 @@ namespace Features.Units.View
 		// [SerializeField] private Sprite _characterIcon;
 
 		[SerializeField] protected TUnit unit;
+		[SerializeField] private UnitUI unitUI;
 		public TUnit Model => unit;
 
 		public virtual void Bind(TUnit unitModel)
 		{
 			this.unit = unitModel;
+
+			if (unitUI != null)
+			{
+				unitUI.Initialize(unitModel);
+			}
+			
 			SubscribeEvents();
 			RefreshView();
 		}
 		
-		public void SubscribeEvents()
+		private void SubscribeEvents()
 		{
 			if (unit != null)
 			{
@@ -45,7 +53,7 @@ namespace Features.Units.View
 		
 		protected virtual void OnEnable()
 		{
-				SubscribeEvents();
+			SubscribeEvents();
 		}
 
 		protected virtual void OnDisable()
@@ -54,12 +62,16 @@ namespace Features.Units.View
 		}
 
 		//子类必须实现这个方法，用来初始化显示
-		protected abstract void RefreshView();
+		protected virtual void RefreshView()
+		{
+			
+		}
 
+		//可以负责播放血量变更的动画
 		protected virtual void UnitOnHpChanged(Unit source, int damage)
 		{ }
 
-
+		//播放死亡动画
 		protected virtual void UnitOnDied(Unit source)
 		{
 		}

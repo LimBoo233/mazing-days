@@ -22,10 +22,35 @@ namespace Features.UI
 
 		private Unit _targetUnit;
 		
-		public void Initialize(Unit unit)
+		/// <summary>
+		/// UnitUI 的初始化方法订阅事件，与数据传递
+		/// </summary>
+		/// <param name="unitModel"></param>
+		public void Initialize(Unit unitModel)
 		{
-			_targetUnit = unit;
-			_targetUnit.HpChanged += UpdateHealthBar;
+			
+			if (_targetUnit != null)
+			{
+				_targetUnit.HpChanged -= UpdateHealthBar;
+			}
+			_targetUnit = unitModel;
+			if (_targetUnit != null)
+			{
+				// 绑定事件
+				_targetUnit.HpChanged += UpdateHealthBar;
+				// 绑定后立即刷新一次
+				RefreshHp();
+			}
+			
+		}
+
+		private void RefreshHp()
+		{
+			if (hpSlider == null)
+				return;
+			float hpPercent = (float)_targetUnit.CurrentHp / _targetUnit.MaxHp;
+			hpSlider.value = hpPercent;
+			
 		}
 
 		/// <summary>
@@ -33,30 +58,7 @@ namespace Features.UI
 		/// </summary>
 		private void UpdateHealthBar(Unit unit, int hpCost)
 		{
-			if (hpSlider == null) return;
-
-			float hpPercent = (float)unit.CurrentHp / unit.MaxHp;
-			hpSlider.value = hpPercent;
-
-			if (fillImage != null)
-			{
-				fillImage.color = hpPercent > 0.5f ? hpHighColor : hpLowColor;
-			}
-		}
-
-		private void Start()
-		{
-			if (_targetUnit != null) return;
-
-			var unit = GetComponentInParent<UnitView<Unit>>();
-			if (unit != null)
-			{
-				//Initialize(unit);
-			}
-			else
-			{
-				Debug.LogError("UnitUI: No Unit found in parent.");
-			}
+			RefreshHp();
 		}
 
 		private void OnDestroy()
