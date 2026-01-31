@@ -778,7 +778,7 @@ MonoBehaviour:
     <MaxBp>k__BackingField: 0
     <MaxRp>k__BackingField: 0
     <MaxSanity>k__BackingField: 100
-  unitUI: {fileID: 1863102255}
+  unitUI: {fileID: 0}
 --- !u!1 &930387529
 GameObject:
   m_ObjectHideFlags: 0

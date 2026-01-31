@@ -40,8 +40,7 @@ namespace Features.Units.Core
 		public int CurrentHp { get; protected set; }
 		public bool IsDead { get; protected set; }
 
-		// 先攻骰
-		// TODO：修改成一个更易懂的名字，比如 InitiativeRoll
+		// 先攻
 		public int Initiative { get; set; }
 
 		// 攻击掷骰加值
@@ -128,14 +127,15 @@ namespace Features.Units.Core
 		protected virtual void OnHpChanged(int finalDamage, bool isCritical)
 		{
 			HpChanged?.Invoke(this, finalDamage);
-			EventBus.Publish(new TakeDamageEvent
+			
+			var takeDamageEvent = new TakeDamageEvent
 			{
 				Target = this,
 				TargetName = CharacterName,
 				Damage = finalDamage,
 				IsCritical = isCritical
-			});
-
+			};
+			EventBus.Publish(takeDamageEvent);
 			EventBus.Publish(new TextNotifiedEvent(CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
 		}
 
