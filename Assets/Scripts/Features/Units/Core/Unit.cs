@@ -6,6 +6,7 @@ using Core.Utils;
 using GameSystemEnum;
 using Modules.Combat.Data;
 using Modules.Combat.Data.Enums;
+using Modules.Combat.Data.SO;
 using UnityEngine;
 
 namespace Features.Units.Core
@@ -28,8 +29,12 @@ namespace Features.Units.Core
 
 		[Header("抗性")]
 		[SerializeField] protected List<ResistanceConfig> resistanceSettings = new();
-
-
+		
+		[Header("技能列表")]
+		// 只用于在 Inspector 里配置“出生自带技能”
+		[SerializeField] private List<SkillDataSo> skills = new List<SkillDataSo>();
+		public List<SkillDataSo> Skills => skills;
+		
 		// 调整值
 		public int DexModifier => (Speed - 10) / 2;
 		public int StrModifier => (Strength - 10) / 2;
@@ -49,6 +54,8 @@ namespace Features.Units.Core
 		public int BaseAttackModifier { get; set; }
 
 		public FactionType FactionType { get; protected set; }
+		
+		
 
 		// 事件
 		public event Action<Unit, int> HpChanged;
