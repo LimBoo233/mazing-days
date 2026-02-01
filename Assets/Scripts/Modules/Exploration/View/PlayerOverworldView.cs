@@ -26,7 +26,7 @@ namespace Modules.Exploration.View
 				return;
 			}
 			
-			var moveDir = GameManager.InputManager.GetMoveDirection();
+			var moveDir = GameManager.Input.GetMoveDirection();
 			if (moveDir != Vector2.zero)
 			{
 				_explorationModule.Move(moveDir, Time.deltaTime);

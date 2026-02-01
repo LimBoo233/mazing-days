@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
 using Features.Units.Core;
 using GameSystemEnum;
 using Modules.Combat.FSM;
@@ -10,7 +9,7 @@ using UnityEngine;
 
 namespace Modules.Combat
 {
-	public class CombatManager: IDisposable
+	public class CombatManager : IDisposable
 	{
 		public bool IsBattleOver { get; private set; }
 		private CombatUIBridge _combatUIBridge = new();
@@ -23,9 +22,9 @@ namespace Modules.Combat
 		//原始战斗单位
 		private List<PlayerUnit> _playerUnits;
 		private List<EnemyUnit> _enemyUnits;
-		
-		public List<Unit> AllEnemies => AllUnits.Where(u => u.FactionType == FactionType.Enemy).ToList();
-		public List<Unit> AllPlayers => AllUnits.Where(u => u.FactionType == FactionType.Player).ToList();
+
+		public List<Unit> AllEnemies => AllUnits.Where(u => u.Data.FactionType == FactionType.Enemy).ToList();
+		public List<Unit> AllPlayers => AllUnits.Where(u => u.Data.FactionType == FactionType.Player).ToList();
 
 		//所有战斗单位，以及他们的顺序
 		public List<Unit> AllUnits { get; private set; } = new();
@@ -45,7 +44,7 @@ namespace Modules.Combat
 		public List<Unit> SelectedTargets { get; set; }
 
 		//当 UI 确认选择时，将此标记设为 true，PlayerTurnState 会在 Update 里检测到
-		public bool IsPlayerActionConfirmed { get; set; } = false;
+		public bool IsPlayerActionConfirmed { get; set; }
 
 		/// <summary>
 		/// 将所有角色加入一个列表中
@@ -81,7 +80,7 @@ namespace Modules.Combat
 			}
 
 			//根据先攻值高的在前，如果一样，则Speed值高的在前
-			TurnOrder = AllUnits.OrderByDescending(u => u.Initiative).ThenByDescending(u => u.Speed).ToList();
+			TurnOrder = AllUnits.OrderByDescending(u => u.Data.Initiative).ThenByDescending(u => u.Data.Speed).ToList();
 			_currentTurnIndex = 0;
 
 			// 打印日志验证顺序(暂时测试 之后直接删掉)
@@ -89,7 +88,7 @@ namespace Modules.Combat
 			foreach (var u in TurnOrder)
 			{
 				string color = u is PlayerUnit ? "green" : "red";
-				log += $"<color={color}>{u.CharacterName}({u.Initiative})</color> > ";
+				log += $"<color={color}>{u.Data.CharacterName}({u.Data.Initiative})</color> > ";
 			}
 
 			Debug.Log(log);
@@ -137,7 +136,7 @@ namespace Modules.Combat
 			}
 
 			//如果轮到的人已经死了，直接跳过，找下一个人
-			if (CurrentActiveUnit.IsDead)
+			if (CurrentActiveUnit.Data.IsDead)
 			{
 				AdvanceTurn();
 			}
@@ -162,10 +161,10 @@ namespace Modules.Combat
 		/// <summary>
 		/// 检查胜负条件
 		/// </summary>
-		/// <returns>战斗结束返回true</returns>
+		/// <returns>战斗结束返回 true</returns>
 		public bool CheckCombatCondition()
 		{
-			bool allEnemiesDead = _enemyUnits.All(u => u.IsDead);
+			bool allEnemiesDead = _enemyUnits.All(u => u.Data.IsDead);
 			if (allEnemiesDead)
 			{
 				IsBattleOver = true;
@@ -174,7 +173,7 @@ namespace Modules.Combat
 				return true;
 			}
 
-			bool allPlayersDead = _playerUnits.All(u => u.IsDead);
+			bool allPlayersDead = _playerUnits.All(u => u.Data.IsDead);
 			if (allPlayersDead)
 			{
 				IsBattleOver = true;
@@ -184,11 +183,10 @@ namespace Modules.Combat
 
 			return false;
 		}
-		
+
 		public void Dispose()
 		{
 			_combatUIBridge.Dispose();
 		}
-		
 	}
 }

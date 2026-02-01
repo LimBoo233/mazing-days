@@ -37,7 +37,7 @@ namespace Features.UI.Panel
             //1.将所有图标回收到对象池中
             ReturnAllItemToPool();
             //2.遍历角色的技能列表 如果有该技能就直接生成
-            foreach (SkillDataSo skillData in _currentUnit.Skills)
+            foreach (SkillDataSo skillData in _currentUnit.Data.Skills)
             {
                 SkillItem item = GetItemFromPool();
                 item.SetUp(skillData, OnSkillClicked);
@@ -47,7 +47,7 @@ namespace Features.UI.Panel
 
         private void OnSkillClicked(int skilledId)
         {
-            GameManager.Instance.CombatManager.SelectedSkillId = skilledId;
+            GameManager.CombatManager.SelectedSkillId = skilledId;
             HideMe();
         }
 

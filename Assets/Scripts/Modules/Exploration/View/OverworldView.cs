@@ -1,15 +1,16 @@
 ﻿using Features.Units.Data;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Modules.Exploration.View
 {
-	public class OverworldView<TData> : MonoBehaviour where TData : IUnitData
+	public class OverworldView<TData> : MonoBehaviour where TData : UnitData
 	{
-		private TData _unitData;
+		public TData UnitData { get; private set; }
 
 		public virtual void Bind(TData unitData)
 		{
-			_unitData = unitData;
+			this.UnitData = unitData;
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace Modules.Combat.FSM.BattleState
 		public void Enter(CombatManager combatManager)
 		{
 			_currentUnit = combatManager.CurrentActiveUnit;
-			Debug.Log($"😈 [FSM] 轮到敌人: <color=red>{_currentUnit.CharacterName}</color>");
+			Debug.Log($"😈 [FSM] 轮到敌人: <color=red>{_currentUnit.Data.CharacterName}</color>");
 			
 			_timer = 0f;
 			_hasActed = false;
@@ -42,11 +42,11 @@ namespace Modules.Combat.FSM.BattleState
 			// 简单的 AI：随机找一个活着的玩家打
 			// 简单做法：从 AllUnits 里找 FactionType 是 Player 的
             
-			var target = manager.AllUnits.Find(u => u.FactionType == GameSystemEnum.FactionType.Player && !u.IsDead);
+			var target = manager.AllUnits.Find(u => u.Data.FactionType == GameSystemEnum.FactionType.Player && !u.Data.IsDead);
 
 			if (target != null)
 			{
-				Debug.Log($" 敌人 {_currentUnit.CharacterName} 攻击了 {target.CharacterName}!");
+				Debug.Log($" 敌人 {_currentUnit.Data.CharacterName} 攻击了 {target.Data.CharacterName}!");
 				int damage = DiceRoller.Roll(1, 8);
 				Debug.Log($" 敌人的{damage}!");
 				target.TakeDamage(damage, Modules.Combat.Data.Enums.DamageType.Bludgeoning);

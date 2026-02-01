@@ -17,7 +17,7 @@ namespace Core
 		public static UIManager UIManager => Instance._uiManager;
 		private UIManager _uiManager;
 
-		public CombatManager CombatManager => _combatManager;
+		public static CombatManager CombatManager => Instance._combatManager;
 		private CombatManager _combatManager;
 
 		public static ExplorationManager ExplorationManager => Instance._explorationManager;
@@ -26,7 +26,7 @@ namespace Core
 		/// <summary>
 		/// 输入管理类
 		/// </summary>
-		public static InputManager InputManager => Instance._inputManager;
+		public static InputManager Input => Instance._inputManager;
 
 		private InputManager _inputManager;
 
@@ -39,6 +39,7 @@ namespace Core
 			_combatManager = new CombatManager();
 			_inputManager = new InputManager();
 		}
+		
 
 		protected void Update()
 		{

@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Features.Units.Core;
-using Features.Units.View;
 using UnityEngine.Serialization;
 
 
@@ -48,7 +47,7 @@ namespace Features.UI
 		{
 			if (hpSlider == null)
 				return;
-			float hpPercent = (float)_targetUnit.CurrentHp / _targetUnit.MaxHp;
+			float hpPercent = (float)_targetUnit.Data.CurrentHp / _targetUnit.Data.MaxHp;
 			hpSlider.value = hpPercent;
 			
 		}

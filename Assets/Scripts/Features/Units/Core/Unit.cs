@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.Architecture;
 using Core.Event;
 using Core.Utils;
+using Features.Units.Data;
 using GameSystemEnum;
 using Modules.Combat.Data;
 using Modules.Combat.Data.Enums;
@@ -12,52 +13,31 @@ using UnityEngine;
 namespace Features.Units.Core
 {
 	[Serializable]
+	public class Unit<T> : Unit where T : UnitData
+	{
+		public new T Data
+		{
+			get => (T)base.Data;
+			protected set => base.Data = value;
+		}
+
+		public override void InitializeStats(UnitData data)
+		{
+			if (data is T tData)
+			{
+				base.InitializeStats(tData);
+			}
+			else
+			{
+				Debug.LogError($"数据类型错误！期望 {typeof(T)}，但收到了 {data.GetType()}");
+			}
+		}
+	}
+
+	[Serializable]
 	public class Unit
 	{
-		[field: Header("基础属性")]
-		[field: SerializeField] public string CharacterName { get; set; }
-
-		[field: SerializeField] public int MaxHp { get; set; }
-		[field: SerializeField] public int CriticalNeed { get; set; } = 20;
-
-		[field: Header("四位属性：力量，速度，智力，精神")]
-		[field: SerializeField] public int Strength { get; set; }
-
-		[field: SerializeField] public int Speed { get; set; }
-		[field: SerializeField] public int Intelligence { get; set; }
-		[field: SerializeField] public int Spirit { get; set; }
-		
-		[field:SerializeField] public int Ac{get; set;}
-		
-		[Header("抗性")]
-		[SerializeField] protected List<ResistanceConfig> resistanceSettings = new();
-		
-		[Header("技能列表")]
-		// 只用于在 Inspector 里配置“出生自带技能”
-		[SerializeField] private List<SkillDataSo> skills = new List<SkillDataSo>();
-		public List<SkillDataSo> Skills => skills;
-		
-		// 调整值
-		public int DexModifier => (Speed - 10) / 2;
-		public int StrModifier => (Strength - 10) / 2;
-		public int IntModifier => (Intelligence - 10) / 2;
-		public int SpiModifier => (Spirit - 10) / 2;
-
-		// 运行时属性
-		public int CurrentHp { get; protected set; }
-		public bool IsDead { get; protected set; }
-
-		// 先攻
-		public int Initiative { get; set; }
-
-		// 攻击掷骰加值
-		// TODO：伤害掷骰加值因取决于武器类型等因素，次数先简单处理
-		public int BaseAccuracyBonus { get; set; }
-		public int BaseAttackModifier { get; set; }
-
-		public FactionType FactionType { get; protected set; }
-		
-		
+		public UnitData Data { get; protected set; }
 
 		// 事件
 		public event Action<Unit, int> HpChanged;
@@ -65,26 +45,28 @@ namespace Features.Units.Core
 
 		// 运行时字典，用于快速查找抗性
 		protected Dictionary<DamageType, float> ResistanceDict = new();
-		
+
 		/// <summary>
 		/// 用于每个 Unit 的初始化，只应该在创建时调用一次
 		/// </summary>
-		public virtual void InitializeStats()
+		public virtual void InitializeStats(UnitData data)
 		{
-			CurrentHp = MaxHp;
-			IsDead = false;
+			Data.CurrentHp = Data.MaxHp;
+			Data.IsDead = false;
 			ResistanceDict.Clear();
-			foreach (var resistanceConfig in resistanceSettings)
+			foreach (var resistanceConfig in Data.ResistanceSettings)
 			{
 				ResistanceDict[resistanceConfig.type] = resistanceConfig.value;
 			}
 		}
 
+		public virtual void InitializeStats() => InitializeStats(new UnitData());
+
 
 		/// <summary>
 		/// 投掷先攻骰的方法，先简单写处理：1d4 + 角色速度的一半
 		/// </summary>
-		public void RollInitiativeDice() => Initiative = DiceRoller.Roll(1, 4) + DexModifier;
+		public void RollInitiativeDice() => Data.Initiative = DiceRoller.Roll(1, 4) + Data.DexModifier;
 
 
 		/// <summary>
@@ -100,7 +82,7 @@ namespace Features.Units.Core
 		/// <param name="isCritical">是否暴击</param>
 		public virtual void TakeDamage(int damage, DamageType type, bool isCritical = false)
 		{
-			if (IsDead) return;
+			if (Data.IsDead) return;
 
 			float resistance = Mathf.Min(GetResistance(type), 1.0f);
 
@@ -108,22 +90,22 @@ namespace Features.Units.Core
 			if (resistance < 1.0f)
 				finalDamage = Mathf.Max(1, finalDamage);
 
-			CurrentHp = Mathf.Clamp(CurrentHp - finalDamage, 0, MaxHp);
-			if (CurrentHp <= 0)
+			Data.CurrentHp = Mathf.Clamp(Data.CurrentHp - finalDamage, 0, Data.MaxHp);
+			if (Data.CurrentHp <= 0)
 			{
 				OnDie();
 			}
 
 			OnHpChanged(finalDamage, isCritical);
 		}
-		
+
 		/// <summary>
 		/// 初始化抗性字典
 		/// </summary>
 		protected virtual void InitializeResistances()
 		{
 			ResistanceDict.Clear();
-			foreach (var config in resistanceSettings)
+			foreach (var config in Data.ResistanceSettings)
 			{
 				if (!ResistanceDict.ContainsKey(config.type))
 				{
@@ -135,21 +117,21 @@ namespace Features.Units.Core
 		protected virtual void OnHpChanged(int finalDamage, bool isCritical)
 		{
 			HpChanged?.Invoke(this, finalDamage);
-			
+
 			var takeDamageEvent = new TakeDamageEvent
 			{
 				Target = this,
-				TargetName = CharacterName,
+				TargetName = Data.CharacterName,
 				Damage = finalDamage,
 				IsCritical = isCritical
 			};
 			EventBus.Publish(takeDamageEvent);
-			EventBus.Publish(new TextNotifiedEvent(CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
+			EventBus.Publish(new TextNotifiedEvent(Data.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
 		}
 
 		protected virtual void OnDie()
 		{
-			IsDead = true;
+			Data.IsDead = true;
 			Died?.Invoke(this);
 			EventBus.Publish(new UnitDiedEvent { DeadUnit = this });
 		}

@@ -26,7 +26,7 @@ namespace DevTools
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void TestAfterSceneLoad()
 		{
-			Test4ExplorationModule();
+			// Test4ExplorationModule();
 		}
 		
 		private static void Test4ExplorationModule()

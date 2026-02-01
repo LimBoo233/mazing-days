@@ -12,6 +12,7 @@ namespace Modules.Combat.FSM.BattleState
             {
                 return;
             }
+            
             var currentUnit = combatManager.CurrentActiveUnit;
             if (currentUnit == null)
             {
