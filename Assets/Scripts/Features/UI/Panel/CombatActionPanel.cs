@@ -21,6 +21,7 @@ namespace Features.UI.Panel
         {
             if (args.Length > 0 && args[0] is Unit unit)
             {
+                Debug.Log("调用刷新技能面板");
                 _currentUnit = unit;
                 RefreshSkills();
             }

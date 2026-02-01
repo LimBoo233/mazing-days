@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Features.Units.Core;
+using GameSystemEnum;
 using Modules.Combat.FSM;
 using Modules.Combat.FSM.BattleState;
 using UnityEngine;
@@ -22,7 +23,9 @@ namespace Modules.Combat
 		//原始战斗单位
 		private List<PlayerUnit> _playerUnits;
 		private List<EnemyUnit> _enemyUnits;
-
+		
+		public List<Unit> AllEnemies => AllUnits.Where(u => u.FactionType == FactionType.Enemy).ToList();
+		public List<Unit> AllPlayers => AllUnits.Where(u => u.FactionType == FactionType.Player).ToList();
 
 		//所有战斗单位，以及他们的顺序
 		public List<Unit> AllUnits { get; private set; } = new();
@@ -39,7 +42,7 @@ namespace Modules.Combat
 		/// </summary>
 		public int SelectedSkillId { get; set; } = -1;
 
-		public Unit SelectedTarget { get; set; }
+		public List<Unit> SelectedTargets { get; set; }
 
 		//当 UI 确认选择时，将此标记设为 true，PlayerTurnState 会在 Update 里检测到
 		public bool IsPlayerActionConfirmed { get; set; } = false;
@@ -140,21 +143,21 @@ namespace Modules.Combat
 			}
 		}
 
-		//测试代码暂时先这么写
-		public void OnPlayerInput(int skillId, Unit target)
-		{
-			//只有当前轮到玩家时才允许输入
-			if (CurrentActiveUnit is PlayerUnit)
-			{
-				SelectedSkillId = skillId;
-				SelectedTarget = target;
-				IsPlayerActionConfirmed = true;
-			}
-			else
-			{
-				Debug.LogWarning("当前不是玩家回合");
-			}
-		}
+		// //测试代码暂时先这么写
+		// public void OnPlayerInput(int skillId, Unit target)
+		// {
+		// 	//只有当前轮到玩家时才允许输入
+		// 	if (CurrentActiveUnit is PlayerUnit)
+		// 	{
+		// 		SelectedSkillId = skillId;
+		// 		SelectedTarget = target;
+		// 		IsPlayerActionConfirmed = true;
+		// 	}
+		// 	else
+		// 	{
+		// 		Debug.LogWarning("当前不是玩家回合");
+		// 	}
+		// }
 
 		/// <summary>
 		/// 检查胜负条件

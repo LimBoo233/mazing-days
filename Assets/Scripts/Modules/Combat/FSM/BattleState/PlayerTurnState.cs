@@ -1,72 +1,191 @@
-﻿using Core.Utils;
+﻿using System;
+using System.Collections.Generic;
+using Core.Utils;
+using Features.Units.Core;
+using Features.Units.View;
+using GameSystemEnum;
 using Modules.Combat.Data.Enums;
+using Modules.Combat.Data.SO;
 using UnityEngine;
 
 namespace Modules.Combat.FSM.BattleState
 {
 	public class PlayerTurnState: IBattleState
 	{
+		private enum TurnPhase
+		{
+			ChooseSkill, 
+			SelectTarget,
+			Executing
+		}
+		private TurnPhase _phase;
+		private Unit _currentUnit;
+		
+		private SkillDataSo _selectedSkill;
+		
 		public void Enter(CombatManager combatManager)
 		{
 			combatManager.SelectedSkillId = -1;
-			combatManager.SelectedTarget = null;
+			combatManager.SelectedTargets = null;
 			combatManager.IsPlayerActionConfirmed = false;
 			Debug.Log("等带玩家输入技能与选择目标");
+			EnterChooseSkillPhase(combatManager);
 		}
 
 		public void Update(CombatManager combatManager)
 		{
-			//这里由于没有技能面板，所以先用键盘输入代替
-			//选择技能,并攻击第一个敌人，以后这里由UI按钮点击代替
-			if (Input.GetKeyDown(KeyCode.Alpha1))
+			switch (_phase)
 			{
-				if (combatManager.AllUnits.Count > 1)
+				case TurnPhase.ChooseSkill:
+					UpdateChooseSkill(combatManager);
+					break;
+				case TurnPhase.SelectTarget:
+					UpdateSelectTarget(combatManager);
+					break;
+				case TurnPhase.Executing:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		/// <summary>
+		/// 进入选择技能阶段
+		/// </summary>
+		/// <param name="combatManager"></param>
+		private void EnterChooseSkillPhase(CombatManager combatManager)
+		{
+			_phase = TurnPhase.ChooseSkill;
+			combatManager.SelectedSkillId = -1;
+			_selectedSkill = null;
+			//打开技能面板 目前还没写UIMgr
+			Debug.Log("等待玩家选择技能");
+		}
+
+		private void UpdateChooseSkill(CombatManager combatManager)
+		{
+			if (combatManager.SelectedSkillId != -1)
+			{
+				_selectedSkill = combatManager.CurrentActiveUnit.Skills.Find
+					(s => s.SkillID == combatManager.SelectedSkillId);
+			}
+			if (_selectedSkill != null)
+			{
+				EnterSelectTargetPhase(combatManager);
+			}
+		}
+		
+		private void EnterSelectTargetPhase(CombatManager combatManager)
+		{
+			_phase = TurnPhase.SelectTarget;
+			Debug.Log("等待玩家选择目标");
+		}
+		
+		private void UpdateSelectTarget(CombatManager combatManager)
+		{
+			//右键点击 反悔选择技能
+			if (Input.GetMouseButtonDown(1))
+			{
+				EnterChooseSkillPhase(combatManager);
+				return;
+			}
+			//按下左键 尝试选中敌人
+			if (Input.GetMouseButtonDown(0))
+			{
+				List<Unit> finalTarget = new List<Unit>();
+				bool isValidSelection = false;
+				
+				Unit target = TrySelectTarget();
+				if (target == null)
+					return;
+				switch (_selectedSkill.TargetType)
 				{
-					//这里先假设只有两个人，一个玩家一个敌人
-					var target = combatManager.AllUnits.Find(u =>
-						u.FactionType != combatManager.CurrentActiveUnit.FactionType && !u.IsDead);
-					if (target != null)
-					{
-						combatManager.OnPlayerInput(0, target);
-					}
+					//单体敌人
+					case TargetType.SingleEnemy:
+						if (!target.IsDead && target.FactionType == FactionType.Enemy)
+						{
+							finalTarget.Add(target);
+							isValidSelection = true;
+						}
+						break;
+					case TargetType.AllEnemies:
+						if (target.FactionType == FactionType.Enemy)
+						{
+							finalTarget = combatManager.AllEnemies;
+							isValidSelection = true;
+						}
+						break;
+					case TargetType.Self:
+						if (target == _currentUnit)
+						{
+							finalTarget.Add(target);
+							isValidSelection = true;
+						}
+						break;
+					case TargetType.SingleAlly:
+						if (!target.IsDead && target.FactionType == FactionType.Player)
+						{
+							finalTarget.Add(target);
+							isValidSelection = true;
+						}
+						break;
+					case TargetType.AllAllies:
+						if (target.FactionType == FactionType.Player)
+						{
+							finalTarget = combatManager.AllPlayers;
+							isValidSelection = true;
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				
+				if (isValidSelection && finalTarget.Count > 0)
+				{
+					ExecuteAction(combatManager,finalTarget);
 				}
 			}
+		}
 
-			if (combatManager.IsPlayerActionConfirmed)
+		/// <summary>
+		/// 尝试选中目标，不论敌人还是队友均可选择
+		/// 后面应该添加鼠标在目标身上时，会有描边的效果
+		/// </summary>
+		/// <returns></returns>
+		private Unit TrySelectTarget()
+		{
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
 			{
-				ExecuteAction(combatManager);
+				var view = hit.collider.GetComponentInParent<UnitView<Unit>>();
+				if (view != null)
+				{
+					return view.Model;
+				}
 			}
+			return null;
 		}
 
 		/// <summary>
 		/// 执行玩家的选择
 		/// </summary>
-		private void ExecuteAction(CombatManager combatManager)
+		private void ExecuteAction(CombatManager combatManager,List<Unit> targets)
 		{
-			var target = combatManager.SelectedTarget;
-			var skillId = combatManager.SelectedSkillId;
-			
-			//现在还传不过来攻击，所以先临时代替(1d8+角色力量调整值)
-			int damage = DiceRoller.Roll(1, 8)+ combatManager.CurrentActiveUnit.StrModifier;
-			Debug.Log($" 玩家的{damage}!");
-			target.TakeDamage(damage, DamageType.Bludgeoning);
-			
-			EndTurn(combatManager);
+			combatManager.SelectedTargets = targets;
+			combatManager.IsPlayerActionConfirmed = true;
+			//调试用
+			foreach (var target in targets)
+			{
+				Debug.Log($"已经选择的目标是{target}");
+			}
+			combatManager.ChangeState(new ExecuteSkillState());
 		}
 		
-		private void EndTurn(CombatManager manager)
-		{
-			// 切换到“处理下一回合”的状态
-			manager.AdvanceTurn();
-			manager.ChangeState(new ProcessTurnState());
-		}
-
 		public void Exit(CombatManager manager)
 		{
 			//关闭角色UI面板
 			Debug.Log("玩家一个角色回合结束");
 		}
-
 		
 	}
 }

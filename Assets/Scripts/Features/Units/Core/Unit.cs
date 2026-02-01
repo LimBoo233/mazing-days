@@ -26,7 +26,9 @@ namespace Features.Units.Core
 		[field: SerializeField] public int Speed { get; set; }
 		[field: SerializeField] public int Intelligence { get; set; }
 		[field: SerializeField] public int Spirit { get; set; }
-
+		
+		[field:SerializeField] public int Ac{get; set;}
+		
 		[Header("抗性")]
 		[SerializeField] protected List<ResistanceConfig> resistanceSettings = new();
 		

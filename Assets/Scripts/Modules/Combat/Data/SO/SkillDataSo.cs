@@ -52,6 +52,10 @@ namespace Modules.Combat.Data.SO
 		[field: Header("伤害配置列表")]
 		[field: SerializeField]
 		public List<DamageDefinition> DamageList { get; private set; }
+		
+		[field: Header("技能目标类型")]
+		[field: SerializeField]
+		public TargetType TargetType { get; private set; }
 
 		[field: Header("技能施法距离")]
 		[field: Tooltip("技能距离取决于什么？（例如武器攻击范围，法术的固定范围）")]
