@@ -65,8 +65,7 @@ namespace Features.Units.Core
 
 		// 运行时字典，用于快速查找抗性
 		protected Dictionary<DamageType, float> ResistanceDict = new();
-
-
+		
 		/// <summary>
 		/// 用于每个 Unit 的初始化，只应该在创建时调用一次
 		/// </summary>

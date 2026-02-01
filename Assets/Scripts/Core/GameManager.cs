@@ -1,7 +1,7 @@
-using System;
 using Modules.Combat;
+using Modules.Exploration;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+
 
 namespace Core
 {
@@ -10,14 +10,25 @@ namespace Core
 		/// <summary>
 		/// 游戏模式控制器（探索/战斗）
 		/// </summary>
-		public GameplayModeController GameplayModeController => _gameplayModeController;
+		public static GameplayModeController GameplayModeController => Instance._gameplayModeController;
+
 		private GameplayModeController _gameplayModeController;
-		
-		public UIManager UIManager => _uiManager;
+
+		public static UIManager UIManager => Instance._uiManager;
 		private UIManager _uiManager;
-		
+
 		public CombatManager CombatManager => _combatManager;
 		private CombatManager _combatManager;
+
+		public static ExplorationManager ExplorationManager => Instance._explorationManager;
+		private ExplorationManager _explorationManager;
+
+		/// <summary>
+		/// 输入管理类
+		/// </summary>
+		public static InputManager InputManager => Instance._inputManager;
+
+		private InputManager _inputManager;
 
 
 		protected override void Awake()
@@ -26,6 +37,7 @@ namespace Core
 			_gameplayModeController = new GameplayModeController();
 			_uiManager = new UIManager();
 			_combatManager = new CombatManager();
+			_inputManager = new InputManager();
 		}
 
 		protected void Update()
