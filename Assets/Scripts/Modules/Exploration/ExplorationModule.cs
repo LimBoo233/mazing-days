@@ -25,13 +25,8 @@ namespace Modules.Exploration
 		private CharacterData _characterData;
 		private float _moveSpeed = 10f;
 		
-		public ExplorationModule(CharacterData characterData) => Bind(characterData);
-
-		public void Bind(CharacterData characterData)
-		{
-			_characterData = characterData;
-		}
-
+		public ExplorationModule(CharacterData characterData) => _characterData = characterData;
+		
 		public void Move(Vector2 direction, float speed, float deltaTime)
 		{
 			Vector3 worldDir = new Vector3(direction.x, 0, direction.y);

@@ -5,6 +5,7 @@ using Core.Event;
 using Core.Utils;
 using Features.Units.Data;
 using GameSystemEnum;
+using Modules.Combat;
 using Modules.Combat.Data;
 using Modules.Combat.Data.Enums;
 using Modules.Combat.Data.SO;
@@ -38,28 +39,30 @@ namespace Features.Units.Core
 	public class Unit
 	{
 		public UnitData Data { get; protected set; }
+		
+		public UnitCombatModule CombatModule { get; protected set; }
 
 		// 事件
 		public event Action<Unit, int> HpChanged;
 		public event Action<Unit> Died;
-
+		
 		// 运行时字典，用于快速查找抗性
 		protected Dictionary<DamageType, float> ResistanceDict = new();
-
+		
 		/// <summary>
 		/// 用于每个 Unit 的初始化，只应该在创建时调用一次
 		/// </summary>
 		public virtual void InitializeStats(UnitData data)
 		{
 			Data = data;
-
-			Data.CurrentHp = Data.MaxHp;
-			Data.IsDead = false;
-			ResistanceDict.Clear();
-			foreach (var resistanceConfig in Data.ResistanceSettings)
-			{
-				ResistanceDict[resistanceConfig.type] = resistanceConfig.value;
-			}
+			
+			CombatModule = new UnitCombatModule(this, data);
+			CombatModule.InitializeStats();
+			
+			CombatModule.HpChanged += (unit, damage) => HpChanged?.Invoke(unit, damage);
+			CombatModule.Died += (unit) => Died?.Invoke(unit);
+			
+			Data.FactionType = FactionType.Neutral;
 		}
 
 		public virtual void InitializeStats() => InitializeStats(new UnitData());
@@ -68,13 +71,13 @@ namespace Features.Units.Core
 		/// <summary>
 		/// 投掷先攻骰的方法，先简单写处理：1d4 + 角色速度的一半
 		/// </summary>
-		public void RollInitiativeDice() => Data.Initiative = DiceRoller.Roll(1, 4) + Data.DexModifier;
+		public void RollInitiativeDice() => CombatModule.RollInitiativeDice();
 
 
 		/// <summary>
 		/// 返回角色对某种伤害类型的抗性值
 		/// </summary>
-		public float GetResistance(DamageType type) => ResistanceDict.GetValueOrDefault(type, 0.0f);
+		public float GetResistance(DamageType type) => CombatModule.GetResistance(type);
 
 		/// <summary>
 		/// 角色受伤逻辑
@@ -82,60 +85,6 @@ namespace Features.Units.Core
 		/// <param name="damage">原始伤害</param>
 		/// <param name="type">伤害类型</param>
 		/// <param name="isCritical">是否暴击</param>
-		public virtual void TakeDamage(int damage, DamageType type, bool isCritical = false)
-		{
-			if (Data.IsDead) return;
-
-			float resistance = Mathf.Min(GetResistance(type), 1.0f);
-
-			int finalDamage = Mathf.RoundToInt(damage * (1.0f - resistance));
-			if (resistance < 1.0f)
-				finalDamage = Mathf.Max(1, finalDamage);
-
-			Data.CurrentHp = Mathf.Clamp(Data.CurrentHp - finalDamage, 0, Data.MaxHp);
-			if (Data.CurrentHp <= 0)
-			{
-				OnDie();
-			}
-
-			OnHpChanged(finalDamage, isCritical);
-		}
-
-		/// <summary>
-		/// 初始化抗性字典
-		/// </summary>
-		protected virtual void InitializeResistances()
-		{
-			ResistanceDict.Clear();
-			foreach (var config in Data.ResistanceSettings)
-			{
-				if (!ResistanceDict.ContainsKey(config.type))
-				{
-					ResistanceDict.Add(config.type, config.value);
-				}
-			}
-		}
-
-		protected virtual void OnHpChanged(int finalDamage, bool isCritical)
-		{
-			HpChanged?.Invoke(this, finalDamage);
-
-			var takeDamageEvent = new TakeDamageEvent
-			{
-				Target = this,
-				TargetName = Data.CharacterName,
-				Damage = finalDamage,
-				IsCritical = isCritical
-			};
-			EventBus.Publish(takeDamageEvent);
-			EventBus.Publish(new TextNotifiedEvent(Data.CharacterName + " 受到 " + finalDamage + " 点伤害", 1000));
-		}
-
-		protected virtual void OnDie()
-		{
-			Data.IsDead = true;
-			Died?.Invoke(this);
-			EventBus.Publish(new UnitDiedEvent { DeadUnit = this });
-		}
+		public virtual void TakeDamage(int damage, DamageType type, bool isCritical = false) => CombatModule.TakeDamage(damage, type, isCritical);
 	}
 }
