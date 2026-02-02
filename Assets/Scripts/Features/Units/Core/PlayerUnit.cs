@@ -1,13 +1,16 @@
 ﻿using System;
 using Features.Units.Data;
 using GameSystemEnum;
+using Modules.Exploration;
 using UnityEngine;
 
 namespace Features.Units.Core
 {
-	[System.Serializable]
+	[Serializable]
 	public class PlayerUnit : Unit<CharacterData>
 	{
+		public ExplorationModule ExplorationModule {get; protected set;}
+		
 		// 事件
 		public event Action<Unit, int> ApChanged;
 		public event Action<Unit, int> BpChanged;
@@ -20,6 +23,8 @@ namespace Features.Units.Core
 			Data.FactionType = FactionType.Player;
 			(Data.CurrentAp, Data.CurrentBp, Data.CurrentRp) = (Data.MaxAp, Data.MaxBp, Data.MaxRp);
 			Data.CurrentSanity = Data.MaxSanity;
+			
+			ExplorationModule = new ExplorationModule(Data);
 		}
 
 		/// <summary>

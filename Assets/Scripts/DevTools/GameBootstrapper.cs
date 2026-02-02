@@ -1,10 +1,12 @@
-﻿using Core;
+﻿using System;
+using Core;
+using Features.Units.Core;
 using Features.Units.Data;
 using Modules.Exploration;
 using Modules.Exploration.View;
 using UnityEngine;
 
-#if UNITY_EDITOR 
+#if UNITY_EDITOR
 
 // 用于测试逻辑，临时运行一些代码等
 namespace DevTools
@@ -21,14 +23,14 @@ namespace DevTools
 			// 游戏逻辑
 			Debug.Log("【开发模式】游戏框架初始化完成");
 		}
-		
+
 		// 这个属性确保它在场景加载后运行
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void TestAfterSceneLoad()
 		{
-			// Test4ExplorationModule();
+			Test4ExplorationModule();
 		}
-		
+
 		private static void Test4ExplorationModule()
 		{
 			if (GameManager.Instance == null)
@@ -36,6 +38,7 @@ namespace DevTools
 				Debug.LogError("【开发模式】GameManager 实例未初始化，无法测试 ExplorationModule");
 				return;
 			}
+			
 			Debug.Log("【开发模式】开始测试 ExplorationModule");
 			
 			var playerPref = GameObject.Find("Player");
@@ -46,23 +49,28 @@ namespace DevTools
 			}
 
 			// 初始化组件
-			var characterData = new CharacterData
+			try
 			{
-				LogicalPosition = Vector3.zero
-			};
-			var explorationModule = new ExplorationModule();
-			explorationModule.Bind(characterData);
-			
-			Debug.Log("【开发模式】完成 explorationModule 的创建");
+				var characterData = new CharacterData { LogicalPosition = Vector3.zero };
+				Debug.Log($"【开发模式】创建 CharacterData 实例：{characterData}");
+				var playerUnit = new PlayerUnit();
+				playerUnit.InitializeStats(characterData);
 
-			var playerOverworldView = playerPref.GetComponent<PlayerOverworldView>();
-			playerOverworldView.Bind(explorationModule);
+				Debug.Log("【开发模式】完成 PlayerUnit 的创建");
 			
-			Debug.Log("【开发模式】完成 PlayerOverworldView 的绑定");
+				var playerOverworldView = playerPref.GetComponent<PlayerOverworldView>();
+				playerOverworldView.Bind(playerUnit);
+
+				Debug.Log("【开发模式】完成 PlayerOverworldView 的创建与绑定");
+			}
+			catch(Exception e)
+			{
+				Debug.LogError($"未能完成初始化 ExplorationModule 相关组件");
+				throw;
+			}
+			
 		}
-		
-		
 	}
 }
 
-#endif 
+#endif

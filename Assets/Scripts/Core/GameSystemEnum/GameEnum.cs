@@ -6,7 +6,8 @@ namespace GameSystemEnum
     public enum FactionType
     {
         Player,
-        Enemy
+        Enemy,
+        Neutral
     }
 
 

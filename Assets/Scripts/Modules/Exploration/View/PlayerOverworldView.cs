@@ -1,5 +1,6 @@
 ﻿using System;
 using Core;
+using Features.Units.Core;
 using Features.Units.Data;
 using UnityEngine;
 
@@ -8,14 +9,15 @@ namespace Modules.Exploration.View
 	/// <summary>
 	/// 用于玩家角色的地图视图
 	/// </summary>
-	public class PlayerOverworldView: OverworldView<CharacterData>
+	public class PlayerOverworldView: OverworldView<PlayerUnit>
 	{
 		private ExplorationModule _explorationModule;
 
-		public void Bind(ExplorationModule explorationModule)
+		public override void Bind(PlayerUnit unit)
 		{
-			_explorationModule = explorationModule;
+			base.Bind(unit);
 			SyncPosition();
+			_explorationModule = unit.ExplorationModule;
 		}
 		
 		protected void Update()

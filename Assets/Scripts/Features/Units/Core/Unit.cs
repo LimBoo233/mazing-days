@@ -51,6 +51,8 @@ namespace Features.Units.Core
 		/// </summary>
 		public virtual void InitializeStats(UnitData data)
 		{
+			Data = data;
+
 			Data.CurrentHp = Data.MaxHp;
 			Data.IsDead = false;
 			ResistanceDict.Clear();

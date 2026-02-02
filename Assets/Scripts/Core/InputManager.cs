@@ -57,13 +57,13 @@ namespace Core
 			return combatView?.Model;
 		}
 		
-		public UnitData TrySelectedWorldCharacter()
+		public Unit TrySelectedWorldCharacter()
 		{
 			Transform selectedTransform = TrySelectedObject();
 			if (selectedTransform == null) return null;
 			
-			var overworldView = selectedTransform.GetComponentInParent<OverworldView<UnitData>>();
-			return overworldView?.UnitData;
+			var overworldView = selectedTransform.GetComponentInParent<OverworldView<Unit>>();
+			return overworldView?.Unit;
 		}
 		
 

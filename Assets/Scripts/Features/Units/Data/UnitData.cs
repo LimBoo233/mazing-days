@@ -10,7 +10,7 @@ namespace Features.Units.Data
 	public class UnitData
 	{
 		[field: Header("基础属性")]
-		[field: SerializeField] public string CharacterName { get; set; }
+		[field: SerializeField] public string CharacterName { get; set; } = "";
 
 		[field: SerializeField] public int MaxHp { get; set; }
 		[field: SerializeField] public int CriticalNeed { get; set; } = 20;
@@ -51,6 +51,6 @@ namespace Features.Units.Data
 		public int BaseAccuracyBonus { get; set; }
 		public int BaseAttackModifier { get; set; }
 
-		public FactionType FactionType { get; set; }
+		public FactionType FactionType { get; set; } = FactionType.Neutral;
 	}
 }
