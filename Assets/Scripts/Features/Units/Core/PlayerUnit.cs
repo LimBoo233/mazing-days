@@ -27,10 +27,10 @@ namespace Features.Units.Core
 			PlayerResourceModule = new PlayerResourceModule(this, Data);
 			PlayerResourceModule.InitializeStats();
 			
-			PlayerResourceModule.ApChanged += ApChanged;
-			PlayerResourceModule.BpChanged += BpChanged;
-			PlayerResourceModule.RpChanged += RpChanged;
-			PlayerResourceModule.SanityChanged += SanityChanged;
+			PlayerResourceModule.ApChanged += (unit, val) => ApChanged?.Invoke(unit, val);
+			PlayerResourceModule.BpChanged += (unit, val) => BpChanged?.Invoke(unit, val);
+			PlayerResourceModule.RpChanged += (unit,val) => RpChanged?.Invoke(unit, val);
+			PlayerResourceModule.SanityChanged += (unit,val) => SanityChanged?.Invoke(unit, val);
 			
 			Data.FactionType = FactionType.Player;
 		}

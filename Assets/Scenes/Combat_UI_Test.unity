@@ -376,16 +376,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ea2c5b43694ad380ba0efdaa6fab01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit:
-    <CharacterName>k__BackingField: 
-    <MaxHp>k__BackingField: 0
-    <CriticalNeed>k__BackingField: 20
-    <Strength>k__BackingField: 0
-    <Speed>k__BackingField: 0
-    <Intelligence>k__BackingField: 0
-    <Spirit>k__BackingField: 0
-    resistanceSettings: []
-    skills: []
   unitUI: {fileID: 174555945}
 --- !u!70 &360000739
 CapsuleCollider2D:
@@ -1198,7 +1188,7 @@ GameObject:
   - component: {fileID: 895665772}
   - component: {fileID: 895665773}
   m_Layer: 0
-  m_Name: PlayerTest
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1233,21 +1223,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3590110f58548d982b093ca346885b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit:
-    <CharacterName>k__BackingField: 
-    <MaxHp>k__BackingField: 0
-    <CriticalNeed>k__BackingField: 20
-    <Strength>k__BackingField: 0
-    <Speed>k__BackingField: 0
-    <Intelligence>k__BackingField: 0
-    <Spirit>k__BackingField: 0
-    resistanceSettings: []
-    skills:
-    - {fileID: 11400000, guid: f7a0d80e7777ffa41a265fadafaedf0a, type: 2}
-    <MaxAp>k__BackingField: 0
-    <MaxBp>k__BackingField: 0
-    <MaxRp>k__BackingField: 0
-    <MaxSanity>k__BackingField: 100
   unitUI: {fileID: 1863102255}
 --- !u!1 &930387529
 GameObject:
@@ -2033,8 +2008,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a1fa51843524474abc6d73c54998434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerView: {fileID: 895665773}
-  enemyView: {fileID: 360000738}
+  playerCombatView: {fileID: 895665773}
+  enemyCombatView: {fileID: 360000738}
 --- !u!4 &1565483199
 Transform:
   m_ObjectHideFlags: 0
