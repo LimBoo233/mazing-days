@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using Core;
 using UnityEngine;
 using Features.Units.Core;
+using Features.Units.Data;
 using Modules.Combat;
 using Modules.Combat.Data.Enums;
+using Modules.Combat.Data.SO;
 using Modules.Combat.View; // 引用伤害类型
 
 public class HealthTest : MonoBehaviour
@@ -11,22 +13,30 @@ public class HealthTest : MonoBehaviour
     // 拖拽场景里的 View 物体
     public PlayerCombatCombatView playerCombatView;
     public EnemyBattleCombatView enemyCombatView;
+    //这里是测试，我觉得Skill应该可以在外部配置比较好，因为我现在不知道这样的架构如何方便的为角色添加Skill
+    public SkillDataSo skillDataSo;
     private CombatManager _combatManager;
     void Start()
     {
         _combatManager = GameManager.CombatManager;
         // 1. 【后端】捏造一个数据
+        CharacterData playerData = new CharacterData();
+        playerData.CharacterName = "Player";
+        playerData.MaxHp = 35;
+        playerData.Speed = 16;
+        playerData.Skills.Add(skillDataSo);
+       
         PlayerUnit playerUnit = new PlayerUnit();
-        playerUnit.Data.CharacterName = "Player";
-        playerUnit.Data.MaxHp = 35;
-        playerUnit.Data.Speed = 16;
-        playerUnit.InitializeStats(); 
+        
+        playerUnit.InitializeStats(playerData); 
+        
+        EnemyData enemyData = new EnemyData();
+        enemyData.CharacterName = "Enemy";
+        enemyData.MaxHp = 20;
+        enemyData.Speed = 12;
         
         EnemyUnit enemyUnit = new EnemyUnit();
-        enemyUnit.Data.CharacterName = "Enemy";
-        enemyUnit.Data.MaxHp = 20;
-        enemyUnit.Data.Speed = 12;
-        enemyUnit.InitializeStats();
+        enemyUnit.InitializeStats(enemyData);
 
         // 2. 【前端】绑定数据
         playerCombatView.Bind(playerUnit);

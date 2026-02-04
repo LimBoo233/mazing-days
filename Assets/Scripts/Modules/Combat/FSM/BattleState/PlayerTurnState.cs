@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using Core;
 using Core.Utils;
+using Features.UI.Panel;
 using Features.Units.Core;
 using GameSystemEnum;
 using Modules.Combat.Data.Enums;
 using Modules.Combat.Data.SO;
 using Modules.Combat.View;
 using UnityEngine;
+using Features.UI.Panel;
 
 namespace Modules.Combat.FSM.BattleState
 {
@@ -64,6 +66,7 @@ namespace Modules.Combat.FSM.BattleState
 			_selectedSkill = null;
 			
 			//打开技能面板 目前还没写 UIMgr
+			GameManager.UIManager.ShowPanel<CombatActionPanel>(E_UILayer.Bottom,null,combatManager.CurrentActiveUnit);
 			Debug.Log("等待玩家选择技能");
 		}
 
@@ -102,7 +105,7 @@ namespace Modules.Combat.FSM.BattleState
 				List<Unit> finalTarget = new List<Unit>();
 				bool isValidSelection = false;
 
-				Unit target = TrySelectTarget();
+				Unit target = GameManager.Input.TrySelectCombatUnit();
 				if (target == null)
 					return;
 				switch (_selectedSkill.TargetType)
@@ -157,26 +160,6 @@ namespace Modules.Combat.FSM.BattleState
 					ExecuteAction(combatManager, finalTarget);
 				}
 			}
-		}
-
-		/// <summary>
-		/// 尝试选中目标，不论敌人还是队友均可选择
-		/// 后面应该添加鼠标在目标身上时，会有描边的效果
-		/// </summary>
-		/// <returns></returns>
-		private Unit TrySelectTarget()
-		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
-			{
-				var view = hit.collider.GetComponentInParent<UnitCombatView<Unit>>();
-				if (view != null)
-				{
-					return view.Model;
-				}
-			}
-
-			return null;
 		}
 
 		/// <summary>

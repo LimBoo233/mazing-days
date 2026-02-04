@@ -19,10 +19,13 @@ namespace Features.UI.Panel
         
         protected override void OnShow(params object[] args)
         {
+            print("调用CombatActionPanel的OnShow");
+            print(args.Length);
             if (args.Length > 0 && args[0] is Unit unit)
             {
                 Debug.Log("调用刷新技能面板");
                 _currentUnit = unit;
+                print(_currentUnit.Data.CharacterName);
                 RefreshSkills();
             }
         }
@@ -37,6 +40,7 @@ namespace Features.UI.Panel
             //1.将所有图标回收到对象池中
             ReturnAllItemToPool();
             //2.遍历角色的技能列表 如果有该技能就直接生成
+            print(_currentUnit.Data.Skills.Count);
             foreach (SkillDataSo skillData in _currentUnit.Data.Skills)
             {
                 SkillItem item = GetItemFromPool();

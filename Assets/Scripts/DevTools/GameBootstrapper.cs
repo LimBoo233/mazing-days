@@ -25,7 +25,7 @@ namespace DevTools
 		}
 
 		// 这个属性确保它在场景加载后运行
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		//[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void TestAfterSceneLoad()
 		{
 			Test4ExplorationModule();

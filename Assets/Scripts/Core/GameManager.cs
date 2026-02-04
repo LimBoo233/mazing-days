@@ -14,8 +14,10 @@ namespace Core
 
 		private GameplayModeController _gameplayModeController;
 
-		public static UIManager UIManager => Instance._uiManager;
-		private UIManager _uiManager;
+		/// <summary>
+		/// UI管理类
+		/// </summary>
+		public static UIManager UIManager => UIManager.Instance;
 
 		public static CombatManager CombatManager => Instance._combatManager;
 		private CombatManager _combatManager;
@@ -27,7 +29,6 @@ namespace Core
 		/// 输入管理类
 		/// </summary>
 		public static InputManager Input => Instance._inputManager;
-
 		private InputManager _inputManager;
 
 
@@ -35,9 +36,10 @@ namespace Core
 		{
 			base.Awake();
 			_gameplayModeController = new GameplayModeController();
-			_uiManager = new UIManager();
 			_combatManager = new CombatManager();
 			_inputManager = new InputManager();
+		
+			
 		}
 		
 
